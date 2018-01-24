@@ -7,6 +7,28 @@ from paramiko import SSHClient
 from scp import SCPClient  # pip install scp
 
 
+def push_credentials(name, local_file='client_credentials.txt', remote_file='credentials.txt'):
+    ssh = SSHClient()
+    ssh.load_system_host_keys()
+
+    clients = manager.list_search({"name": name})
+
+    for c in clients:
+        assert name in c.networks, "No such network %s" % options.network
+
+        c_net = c.networks[options.network]
+        if len(c_net) > 0:
+            c_ip = c_net[0]
+
+            print("pushing to " + name + ": " + c_ip)
+
+            ssh.connect(c_ip)
+            scp = SCPClient(ssh.get_transport())
+
+            scp.put(local_file, remote_file)
+            ssh.close()
+
+
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -52,25 +74,28 @@ if __name__ == "__main__":
     with open('client_credentials.txt', 'w') as f:
         f.write(config)
 
-    backends = manager.list_search({"name": options.backendname})
+    push_credentials(backend)
+    push_credentials(frontend)
 
-    ssh = SSHClient()
-    ssh.load_system_host_keys()
+    # ssh = SSHClient()
+    # ssh.load_system_host_keys()
 
-    for b in backends:
-        assert options.network in b.networks, "No such network %s" % options.network
+    # backends = manager.list_search({"name": options.backendname})
 
-        b_net = b.networks[options.network]
-        if len(b_net) > 0:
-            b_ip = b_net[0]
+    # for b in backends:
+    #     assert options.network in b.networks, "No such network %s" % options.network
 
-            print("backend ip:" + b_ip)
+    #     b_net = b.networks[options.network]
+    #     if len(b_net) > 0:
+    #         b_ip = b_net[0]
 
-            ssh.connect(b_ip)
-            scp = SCPClient(ssh.get_transport())
+    #         print("backend ip:" + b_ip)
 
-            scp.put('client_credentials.txt', 'credentials.txt')
-            ssh.close()
+    #         ssh.connect(b_ip)
+    #         scp = SCPClient(ssh.get_transport())
+
+    #         scp.put('client_credentials.txt', 'credentials.txt')
+    #         ssh.close()
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
 
