@@ -74,8 +74,8 @@ if __name__ == "__main__":
     with open('client_credentials.txt', 'w') as f:
         f.write(config)
 
-    push_credentials(backend)
-    push_credentials(frontend)
+    push_credentials('backend')
+    push_credentials('frontend')
 
     # ssh = SSHClient()
     # ssh.load_system_host_keys()
