@@ -106,7 +106,7 @@ class Manager:
 #        pass
 
 
-'if __name__ == "__main__":
+if __name__ == "__main__":
     parser = OptionParser()
 
     parser.add_option('-c', '--initfile', dest='initFile',
