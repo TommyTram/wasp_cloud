@@ -42,6 +42,12 @@ def callback(ch, method, properties, body):
         except:
             print("Couldn't download")
 
+        try:
+            cmd = """sudo mencoder %s -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=3000 -oac copy -o %s""" % (
+            fileLocation+fileName, fileLocation + "/out" + fileName)
+            os.system(cmd)
+        except:
+            print("Couldn't convert")
 
         ch.basic_ack(delivery_tag = method.delivery_tag)
         time.sleep(3)
