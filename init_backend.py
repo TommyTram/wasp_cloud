@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     manager = Manager()
 
-    print(manager.list_search())
+    print(manager.list_search({"display_name": options.rabbitname}))
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
 
