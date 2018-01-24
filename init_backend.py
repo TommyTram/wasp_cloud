@@ -58,8 +58,8 @@ if __name__ == "__main__":
         assert options.network in b.networks, "No such network %s" % options.network
 
         b_net = b.networks[options.network]
-        if len(rabbit_network) > 0:
-            b_ip = rabbit_network[0]
+        if len(b_net) > 0:
+            b_ip = b_net[0]
 
             print(b_ip)
 
