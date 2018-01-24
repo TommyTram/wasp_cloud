@@ -65,6 +65,29 @@ def request_from_ips(ips, port, req):
     return responses
 
 
+def get_queue_length(credential_file):
+
+    config = ConfigParser.RawConfigParser()
+    config.read(options.credentialFile)
+    connection = {}
+    connection["server"] = config.get('rabbit', 'server')
+    connection["port"] = int(config.get('rabbit', 'port'))
+    connection["queue"] = config.get('rabbit', 'queue')
+    connection["username"] = config.get('rabbit', 'username')
+    connection["password"] = config.get('rabbit', 'password')
+
+    qname = connection["queue"]
+    credentials = pika.PlainCredentials(
+        connection["username"], connection["password"])
+    connection = pika.BlockingConnection(pika.ConnectionParameters(connection["server"],
+                                                                   connection["port"], '/',
+                                                                   credentials))
+    channel = connection.channel()
+    res = channel.queue_declare(queue=qname, durable=True)
+
+    return res.method.message_count
+
+
 def get_stats(backendname, network, port):
 
     ips = get_client_ips(backendname, network)
@@ -91,11 +114,15 @@ if __name__ == "__main__":
     parser.add_option('-p', '--port', dest='port',
                       help='port',
                       default="5000", metavar='PORT')
+    parser.add_option('-c', '--credential', dest='credentialFile',
+                      help='Path to CREDENTIAL file', default='client_credentials.txt', metavar='CREDENTIALFILE')
 
     (options, args) = parser.parse_args()
 
     free, busy, na, cpu = get_stats(
         options.backendname, options.network, options.port)
+
+    get_queue_length(options.credentialFile)
 
     print("Free: {0} Busy: {1} N/A: {2}".format(free, busy, na))
 
