@@ -10,7 +10,7 @@ if __name__ == "__main__":
     #                   help='Path to INITFILE', metavar='INITFILE', default="vm-init.sh")
     parser.add_option('-r', '--rabbitname', dest='rabbitname',
                       help='rabbitmq id',
-                      default="list", metavar='RABBITMQ')
+                      default="rabbitmq", metavar='RABBITMQ')
     (options, args) = parser.parse_args()
 
     manager = Manager()
