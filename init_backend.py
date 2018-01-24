@@ -7,6 +7,9 @@ from paramiko import SSHClient
 import paramiko
 from scp import SCPClient  # pip install scp
 
+import json
+import urllib2
+
 
 def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
     manager = Manager()
@@ -51,6 +54,24 @@ def get_rabbit_ip(name):
     return rabbit_ip
 
 
+def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/v3', os_user_domain_name='xerces'):
+
+    # curl -v -s -X POST $OS_AUTH_URL/auth/tokens   -H "Content-Type: application/json"   -d '{ "auth": { "identity": { "methods": ["password"],"password": {"user": {"domain": {"name": "'"$OS_USER_DOMAIN_NAME"'"},"name": "'"$OS_USERNAME"'", "password": "'"$OS_PASSWORD"'"} } } } }
+
+    data = {"auth": {"identity": {"methods": ["password"], "password": {
+        "user": {"domain": {"name": os_user_domain_name},
+                 "name": username,
+                 "password": password}
+    }}}}
+
+    req = urllib2.Request(os_auth_url)
+    req.add_header('Content-Type', 'application/json')
+
+    response = urllib2.urlopen(req, json.dumps(data))
+
+    print(response)
+
+
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -64,8 +85,23 @@ if __name__ == "__main__":
     parser.add_option('-n', '--network', dest='network',
                       help='network id',
                       default="tutorial_net", metavar='NETWORK')
+    parser.add_option('-c', '--credential', dest='credentialFile',
+                      help='Path to CREDENTIAL file', default='credentials.txt', metavar='CREDENTIALFILE')
 
     (options, args) = parser.parse_args()
+
+    config = ConfigParser.RawConfigParser()
+    config.read(options.credentialFile)
+
+    connection = {}
+
+    connection["user_domain_name"] = config.get('user_domain_name', 'port')
+    connection["auth_url"] = config.get('auth', 'auth_url')
+    connection["username"] = config.get('auth', 'username')
+    connection["password"] = config.get('auth', 'password')
+
+    get_token(connection["username"], connection["password"],
+              connection["auth_url"], connection["user_domain_name"])
 
     rabbit_ip = get_rabbit_ip(options.rabbitname)
 

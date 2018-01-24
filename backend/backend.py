@@ -60,6 +60,7 @@ def callback(ch, method, properties, body):
         cmd = "sudo swift -A {0} --os-auth-token {1} download -o {2} {3} {4}".format(
             auth_path, os_token, file_in, container, filename)
 
+        print(cmd)
         os.system(cmd)
         #rsp = urllib2.urlopen(url_in)
 
