@@ -34,7 +34,7 @@ def get_client_ips(name, network):
         c_net = c.networks[options.network]
         if len(c_net) > 0:
             c_ip = c_net[0]
-            ips.append()
+            ips.append(c_ip)
 
     return ips
 
