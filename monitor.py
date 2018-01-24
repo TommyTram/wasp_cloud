@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     print(ips)
 
-    responses = request_from_ips(ips, '/IsBusy')
+    responses = request_from_ips('/IsBusy', ips)
 
     print(responses)
 
