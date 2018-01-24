@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     rabbit = rabbits[0]
 
-    assert options.network in rabbit.networks, "No such network %s", options.network
+    assert options.network in rabbit.networks, "No such network %s" % options.network
 
     rabbit_network = rabbit.networks[options.network]
 
