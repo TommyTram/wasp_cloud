@@ -44,7 +44,8 @@ def get_busy_stats(responses):
     free = 0
     busy = 0
     na = 0
-    for r in responses:
+    for key in responses:
+        r = responses[key]
         if r == '0':
             free += 1
         if r == '1':
@@ -57,10 +58,10 @@ def get_busy_stats(responses):
 
 def request_from_ips(ips, port, req):
 
-    responses = list()
+    responses = dict()
     for ip in ips:
         print(ip)
-        responses.append(request(ip, port, req))
+        responses(ip) = request(ip, port, req)
 
     return responses
 
