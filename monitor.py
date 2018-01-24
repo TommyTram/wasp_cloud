@@ -32,7 +32,7 @@ def request(ip, port, uri):
 def get_client_ips(name, network):
 
     manager = Manager()
-    clients = manager.list_search({"name": options.backendname})
+    clients = manager.list_search({"name": name})
 
     ips = list()
     for c in clients:
