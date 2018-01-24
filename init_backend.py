@@ -9,6 +9,7 @@ from scp import SCPClient  # pip install scp
 
 import json
 import urllib2
+import urlparse
 
 
 def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
@@ -64,7 +65,7 @@ def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/
                  "password": password}
     }}}}
 
-    req = urllib2.Request(os_auth_url, json.dumps(
+    req = urllib2.Request(urlparse.urljoin(os_auth_url, 'auth/token'), json.dumps(
         data), {'Content-Type': 'application/json'})
 
     response = urllib2.urlopen(req, "")
