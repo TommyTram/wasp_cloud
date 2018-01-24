@@ -3,6 +3,9 @@ from optparse import OptionParser
 from vmanager import Manager
 import re
 
+from paramiko import SSHClient
+from scp import SCPClient  # pip install scp
+
 
 if __name__ == "__main__":
 
@@ -51,7 +54,14 @@ if __name__ == "__main__":
 
     backends = manager.list_search({"name": options.backendname})
 
-    print(backends)
+    for b in backends:
+        assert options.network in b.networks, "No such network %s" % options.network
+
+        b_net = b.networks[options.network]
+        if len(rabbit_network) > 0:
+            b_ip = rabbit_network[0]
+
+            print(b_ip)
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
 
