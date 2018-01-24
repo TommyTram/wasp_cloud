@@ -12,7 +12,7 @@ def request(ip, port, uri):
     print("Getting: " + request)
 
     try:
-        response = urlopen(request)
+        response = urlopen(request, timeout=1)
         data = response.read()
         return data
 
