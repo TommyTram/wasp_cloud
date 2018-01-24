@@ -4,10 +4,10 @@ from urllib2 import Request, urlopen, URLError
 import urlparse
 
 
-def request(ip, uri):
+def request(ip, port, uri):
     # requst = "http://ip/uri"
     # urlparse.urljoin(ip, uri))
-    request = urlparse.urljoin("http://" + ip, uri)
+    request = urlparse.urljoin("http://" + ip + ":" + port, uri)
 
     print("Getting: " + request)
 
@@ -39,12 +39,12 @@ def get_client_ips(name, network):
     return ips
 
 
-def request_from_ips(req, ips):
+def request_from_ips(ips, port, req):
 
     responses = list()
     for ip in ips:
         print(ip)
-        responses.append(request(ip, req))
+        responses.append(request(ip, port, req))
 
 
 if __name__ == "__main__":
@@ -57,6 +57,9 @@ if __name__ == "__main__":
     parser.add_option('-n', '--network', dest='network',
                       help='network id',
                       default="tutorial_net", metavar='NETWORK')
+    parser.add_option('-p', '--port', dest='port',
+                      help='port',
+                      default="5000", metavar='PORT')
 
     (options, args) = parser.parse_args()
 
@@ -64,7 +67,7 @@ if __name__ == "__main__":
 
     print(ips)
 
-    responses = request_from_ips('/IsBusy', ips)
+    responses = request_from_ips(ips, port, '/IsBusy')
 
     print(responses)
 
