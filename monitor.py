@@ -1,4 +1,6 @@
 from optparse import OptionParser
+import pika
+import ConfigParser
 from vmanager import Manager
 from urllib2 import Request, urlopen, URLError
 import urlparse
