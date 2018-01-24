@@ -62,6 +62,9 @@ class Manager:
                    "\t", server.networks, sep="")
         return
 
+    def list_search(self, search_opts=None):
+        return self.nova.servers.list(search_opts=search_opts)
+
     def terminate(self, vm=""):
         server_exists = False
         for s in self.nova.servers.list():
