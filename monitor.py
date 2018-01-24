@@ -65,7 +65,7 @@ def request_from_ips(ips, port, req):
     return responses
 
 
-def get_busy(backendname, network, port, req='/isBusy'):
+def get_stats(backendname, network, port, req='/isBusy'):
 
     ips = get_client_ips(backendname, network)
 
