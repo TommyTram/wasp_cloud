@@ -62,7 +62,8 @@ def sum_cpu_load(responses):
 
     sum = 0.0
     for key in responses:
-        sum += float(responses[key])
+        if responses[key] is not None:
+            sum += float(responses[key])
 
     return sum
 
