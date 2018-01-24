@@ -29,12 +29,14 @@ def get_client_ips(name, network):
 
     ips = list()
     for c in clients:
-        assert network in c.networks, "No such network %s" % network
+        #assert network in c.networks, "No such network %s" % network
 
-        c_net = c.networks[options.network]
-        if len(c_net) > 0:
-            c_ip = c_net[0]
-            ips.append(c_ip)
+        if network in c.networks:
+
+            c_net = c.networks[options.network]
+            if len(c_net) > 0:
+                c_ip = c_net[0]
+                ips.append(c_ip)
 
     return ips
 
