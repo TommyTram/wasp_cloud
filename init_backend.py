@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # parser.add_option('-c', '--initfile', dest='initFile',
     #                   help='Path to INITFILE', metavar='INITFILE', default="vm-init.sh")
     parser.add_option('-r', '--rabbitname', dest='rabbitmq',
-                      help='rabbitmq id'
+                      help='rabbitmq id',
                       default="list", metavar='RABBITMQ')
     (options, args) = parser.parse_args()
 
