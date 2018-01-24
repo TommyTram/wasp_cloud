@@ -28,7 +28,13 @@ if __name__ == "__main__":
 
     rabbit = rabbits[0]
 
-    rabbit_ip = rabbit.networks[options.network]
+    assert options.network in rabbit.networks, "No such network %s", options.network
+
+    rabbit_network = rabbit.networks[options.network]
+
+    if len(rabbit_network) < 0:
+        rabbit_ip = rabbit_network[0]
+    else:
 
     print("rabbit ip: " + rabbit_ip)
 
