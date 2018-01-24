@@ -8,7 +8,6 @@ from scp import SCPClient  # pip install scp
 
 
 def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
-
     manager = Manager()
     clients = manager.list_search({"name": name})
 
@@ -32,7 +31,6 @@ def push_credentials(name, network, local_file='client_credentials.txt', remote_
 
 
 def get_rabbit_ip(name):
-
     manager = Manager()
     rabbits = manager.list_search({"name": name})
 
@@ -55,8 +53,6 @@ if __name__ == "__main__":
 
     parser = OptionParser()
 
-    # parser.add_option('-c', '--initfile', dest='initFile',
-    #                   help='Path to INITFILE', metavar='INITFILE', default="vm-init.sh")
     parser.add_option('-r', '--rabbitname', dest='rabbitname',
                       help='rabbitmq id',
                       default="rabbitmq", metavar='RABBITMQ')
@@ -82,49 +78,3 @@ if __name__ == "__main__":
 
     push_credentials('backend', options.network)
     push_credentials('frontend', options.network)
-
-    # ssh = SSHClient()
-    # ssh.load_system_host_keys()
-
-    # backends = manager.list_search({"name": options.backendname})
-
-    # for b in backends:
-    #     assert options.network in b.networks, "No such network %s" % options.network
-
-    #     b_net = b.networks[options.network]
-    #     if len(b_net) > 0:
-    #         b_ip = b_net[0]
-
-    #         print("backend ip:" + b_ip)
-
-    #         ssh.connect(b_ip)
-    #         scp = SCPClient(ssh.get_transport())
-
-    #         scp.put('client_credentials.txt', 'credentials.txt')
-    #         ssh.close()
-
-    # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
-
-    # # print(args)
-    # if options.action:
-    #     manager = Manager(start_script=options.initFile)
-    #     # manager.list()
-    #     if options.action == "list":
-    #         manager.list()
-    #     if options.action == "list-ips":
-    #         manager.get_IPs()
-    #     if options.action == "terminate":
-    #         manager.terminate(vm=args[0])
-    #     if options.action == "create":
-    #         manager.start_script = options.initFile
-    #         manager.create(name=args[0])
-    #         # time.sleep(1)
-    #         # print(manager.get_IP(vm=args[0]))
-    #     if options.action == "describe":
-    #         manager.describe(vm=args[0])
-    #     if options.action == "show-ip":
-    #         manager.get_IP(vm=args[0])
-    #     if options.action == "assign-fip":
-    #         manager.assign_floating_IP(vm=args[0])
-    # else:
-    #     print("Syntax: 'python vmanager.py -h' | '--help' for help")
