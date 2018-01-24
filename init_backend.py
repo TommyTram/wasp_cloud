@@ -17,6 +17,7 @@ if __name__ == "__main__":
 
     rabbits = manager.list_search({"name": options.rabbitname})
 
+    print(rabbits)
     assert len(rabbits) > 1, "Multiple rabbit mq running"
     assert len(rabbits) < 1, "No rabbit mq running"
 
