@@ -1,44 +1,80 @@
 
 from optparse import OptionParser
 from vmanager import Manager
+import re
+
+from paramiko import SSHClient
+from scp import SCPClient  # pip install scp
+
+
+def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
+    manager = Manager()
+    clients = manager.list_search({"name": name})
+
+    ssh = SSHClient()
+    ssh.load_system_host_keys()
+
+    for c in clients:
+        assert network in c.networks, "No such network %s" % network
+
+        c_net = c.networks[options.network]
+        if len(c_net) > 0:
+            c_ip = c_net[0]
+
+            print("pushing to " + name + ": " + c_ip)
+
+            ssh.connect(c_ip)
+            scp = SCPClient(ssh.get_transport())
+
+            scp.put(local_file, remote_file)
+            ssh.close()
+
+
+def get_rabbit_ip(name):
+    manager = Manager()
+    rabbits = manager.list_search({"name": name})
+
+    assert len(rabbits) == 1, "%d rabbits running" % len(rabbits)
+
+    rabbit = rabbits[0]
+
+    assert options.network in rabbit.networks, "No such network %s" % options.network
+
+    rabbit_network = rabbit.networks[options.network]
+
+    assert len(rabbit_network) > 0, "No ips found"
+
+    rabbit_ip = rabbit_network[0]
+
+    return rabbit_ip
+
 
 if __name__ == "__main__":
 
     parser = OptionParser()
 
-    # parser.add_option('-c', '--initfile', dest='initFile',
-    #                   help='Path to INITFILE', metavar='INITFILE', default="vm-init.sh")
     parser.add_option('-r', '--rabbitname', dest='rabbitname',
                       help='rabbitmq id',
                       default="rabbitmq", metavar='RABBITMQ')
+    parser.add_option('-b', '--backendname', dest='backendname',
+                      help='backend id',
+                      default="backend", metavar='BACKEND')
+    parser.add_option('-n', '--network', dest='network',
+                      help='network id',
+                      default="tutorial_net", metavar='NETWORK')
+
     (options, args) = parser.parse_args()
 
-    manager = Manager()
+    rabbit_ip = get_rabbit_ip(options.rabbitname)
 
-    print(manager.list_search({"name": options.rabbitname}))
+    print("rabbit ip: " + rabbit_ip)
 
-    # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
+    with open('client_credentials.txt.template', 'r') as f:
+        config = ''.join(f.readlines())
+        config = re.sub(r'\bserver\b', r"server=" + rabbit_ip, config)
 
-    # # print(args)
-    # if options.action:
-    #     manager = Manager(start_script=options.initFile)
-    #     # manager.list()
-    #     if options.action == "list":
-    #         manager.list()
-    #     if options.action == "list-ips":
-    #         manager.get_IPs()
-    #     if options.action == "terminate":
-    #         manager.terminate(vm=args[0])
-    #     if options.action == "create":
-    #         manager.start_script = options.initFile
-    #         manager.create(name=args[0])
-    #         # time.sleep(1)
-    #         # print(manager.get_IP(vm=args[0]))
-    #     if options.action == "describe":
-    #         manager.describe(vm=args[0])
-    #     if options.action == "show-ip":
-    #         manager.get_IP(vm=args[0])
-    #     if options.action == "assign-fip":
-    #         manager.assign_floating_IP(vm=args[0])
-    # else:
-    #     print("Syntax: 'python vmanager.py -h' | '--help' for help")
+    with open('client_credentials.txt', 'w') as f:
+        f.write(config)
+
+    push_credentials('backend', options.network)
+    push_credentials('frontend', options.network)
