@@ -7,14 +7,17 @@ import ConfigParser
 def callback(ch, method, properties, body):
 	print(" [x] Processing %r" % body)
 
+	ch.basic_ack(delivery_tag = method.delivery_tag)
+
 def receive(connection_info=None):
 	qname = "wasp"
 	credentials = pika.PlainCredentials(connection_info["username"], connection_info["password"])
 	connection = pika.BlockingConnection(pika.ConnectionParameters(connection_info["server"],connection_info["port"],'/',credentials))
 	channel = connection.channel()
 
-	channel.queue_declare(queue=qname)
-	channel.basic_consume(callback, queue=qname, no_ack=True)
+	channel.queue_declare(queue=qname, durable=True)
+	channel.basic_qos(prefetch_count=1)
+	channel.basic_consume(callback, queue=qname)
 	print(' [*] Waiting for messages. To exit press CTRL+C')
 	channel.start_consuming()
 
