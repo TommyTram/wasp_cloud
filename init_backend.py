@@ -68,20 +68,21 @@ def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/
     url = urlparse.urljoin(os_auth_url + "/", 'auth/tokens')
     print(json.dumps(data))
     print(url)
+
     req = urllib2.Request(url, json.dumps(
         data), {'Content-Type': 'application/json'})
 
     try:
-        response = urllib2.urlopen(req, "")
+        response = urllib2.urlopen(req)
+        headers = dict(response.info())
+
+        print(headers)
+
+        print(response.read())
+
     except urllib2.HTTPError as e:
         error_message = e.read()
         print error_message
-
-    headers = dict(response.info())
-
-    print(headers)
-
-    print(response.read())
 
 
 if __name__ == "__main__":
