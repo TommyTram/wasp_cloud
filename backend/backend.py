@@ -44,7 +44,7 @@ def callback(ch, method, properties, body):
 
         try:
             cmd = """sudo mencoder %s -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=3000 -oac copy -o %s""" % (
-            fileLocation+fileName, fileLocation + "/out" + fileName)
+            fileLocation+fileName, fileLocation + "/out/" + fileName)
             os.system(cmd)
         except:
             print("Couldn't convert")
