@@ -44,7 +44,12 @@ if __name__ == "__main__":
 
     with open('client_credentials.txt', 'rw') as f:
         config = ''.join(f.readlines())
-        re.sub(r'\bserver\b', r"server=" + rabbit_ip, config)
+
+        print(config)
+
+        config = re.sub(r'\bserver\b', r"server=" + rabbit_ip, config)
+
+        print(config)
         f.write(config)
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
