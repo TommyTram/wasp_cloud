@@ -65,9 +65,7 @@ if __name__ == "__main__":
 
     ips = get_client_ips(options.backendname, options.network)
 
-    print(ips)
-
-    responses = request_from_ips(ips, options.port, '/IsBusy')
+    responses = request_from_ips(ips, options.port, '/isBusy')
 
     print(responses)
 
