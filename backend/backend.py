@@ -27,21 +27,29 @@ def callback(ch, method, properties, body):
         print(" [x] Processing %r" % body)
 
         # Read download url
-        #downloadUrl = body
+        downloadUrl = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring"
+        
         # Extract file name
-        #fileName = downloadUrl.rpartition("/")[2]
-        #fileLocation = "/tmp/"
+        fileName = body
+        fileLocation = "/tmp/"
         # Open url
-        #rsp = urllib2.urlopen(downloadUrl)
 
-        #with open(fileLocation + fileName,'wb') as f:
-        # 	f.write(rsp.read())
+        try:
+            rsp = urllib2.urlopen(downloadUrl)
 
+            with open(fileLocation + fileName,'wb') as f:
+             	f.write(rsp.read())
+        except:
+            print("Couldn't download")
 
 
         ch.basic_ack(delivery_tag = method.delivery_tag)
         time.sleep(3)
-        #os.remove(fileLocation + fileName)
+
+        try:
+            os.remove(fileLocation + fileName)
+        except:
+            print("Couldn't remove file")
 
         print(" [x] Process done ---")
         isBusyState = "0"
