@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# set hostname 
+# set hostname
 sudo echo waspmq-frontend > /etc/hostname
 sudo sed -i "s/127.0.0.1 localhost/127.0.0.1 waspmq-frontend/g" /etc/hosts
 
@@ -15,3 +15,10 @@ sudo pip install Flask
 
 # echo "Cloning repo with WASP2"
 git clone https://github.com/TommyTram/wasp_cloud.git ~ubuntu/wasp_cloud
+
+while [ ! -f ~ubuntu/credentials.txt ] ;
+do
+      sleep 2
+done
+
+python ~ubuntu/wasp_cloud/frontend/frontend.py -c ~ubuntu/credentials.txt

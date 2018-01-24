@@ -9,8 +9,6 @@ def request(ip, port, uri):
     # urlparse.urljoin(ip, uri))
     request = urlparse.urljoin("http://" + ip + ":" + port, uri)
 
-    print("Getting: " + request)
-
     try:
         response = urlopen(request, timeout=1)
         data = response.read()
