@@ -13,6 +13,9 @@ if __name__ == "__main__":
     parser.add_option('-r', '--rabbitname', dest='rabbitname',
                       help='rabbitmq id',
                       default="rabbitmq", metavar='RABBITMQ')
+    parser.add_option('-b', '--backendname', dest='backendname',
+                      help='backend id',
+                      default="backend", metavar='BACKEND')
     parser.add_option('-n', '--network', dest='network',
                       help='network id',
                       default="tutorial_net", metavar='NETWORK')
@@ -23,9 +26,6 @@ if __name__ == "__main__":
 
     rabbits = manager.list_search({"name": options.rabbitname})
 
-    print(rabbits)
-    print(len(rabbits))
-    print(rabbits[0])
     assert len(rabbits) == 1, "%d rabbits running" % len(rabbits)
 
     rabbit = rabbits[0]
@@ -48,6 +48,10 @@ if __name__ == "__main__":
 
     with open('client_credentials.txt', 'w') as f:
         f.write(config)
+
+    backends = manager.list_search({"name": options.backendname})
+
+    print(backends)
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
 
