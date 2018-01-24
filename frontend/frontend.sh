@@ -18,4 +18,4 @@ mkdir /var/www
 cd /var/www
 
 # echo "Cloning repo with WASP2"
-git clone https://github.com/muyiibidun/WASP.git
+git clone https://github.com/TommyTram/wasp_cloud.git
