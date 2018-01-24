@@ -65,7 +65,7 @@ def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/
                  "password": password}
     }}}}
 
-    req = urllib2.Request(urlparse.urljoin(os_auth_url, 'auth/token'), json.dumps(
+    req = urllib2.Request(urlparse.urljoin(os_auth_url, 'auth/tokens'), json.dumps(
         data), {'Content-Type': 'application/json'})
 
     response = urllib2.urlopen(req, "")
