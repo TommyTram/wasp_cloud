@@ -73,7 +73,7 @@ def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/
 
     print(headers)
 
-    print(f.read())
+    print(response.read())
 
 
 if __name__ == "__main__":
