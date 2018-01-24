@@ -11,6 +11,10 @@ if __name__ == "__main__":
     parser.add_option('-r', '--rabbitname', dest='rabbitname',
                       help='rabbitmq id',
                       default="rabbitmq", metavar='RABBITMQ')
+    parser.add_option('-n', '--network', dest='network',
+                      help='network id',
+                      default="tutorial_net", metavar='NETWORK')
+
     (options, args) = parser.parse_args()
 
     manager = Manager()
@@ -24,7 +28,7 @@ if __name__ == "__main__":
 
     rabbit = rabbits[0]
 
-    rabbit_ip = rabbit.net_id[0]
+    rabbit_ip = rabbit.networks[options.network]
 
     print("rabbit ip: " + rabbit_ip)
 
