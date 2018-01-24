@@ -43,8 +43,8 @@ if __name__ == "__main__":
     print("rabbit ip: " + rabbit_ip)
 
     with f = open('client_credentials.txt', 'w'):
-        config = ''.join(open('file.txt').readlines())
-        re.sub(r'\bserver=\b', r"erver = " + rabbit_ip, config)
+        config = ''.join(f.readlines())
+        re.sub(r'\bserver\b', r"server=" + rabbit_ip, config)
         f.write(yourTxt)
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
