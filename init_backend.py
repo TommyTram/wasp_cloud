@@ -71,7 +71,11 @@ def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/
     req = urllib2.Request(url, json.dumps(
         data), {'Content-Type': 'application/json'})
 
-    response = urllib2.urlopen(req, "")
+    try:
+        response = urllib2.urlopen(req, "")
+    except urllib2.HTTPError as e:
+        error_message = e.read()
+        print error_message
 
     headers = dict(response.info())
 
