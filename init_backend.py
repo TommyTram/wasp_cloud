@@ -20,8 +20,7 @@ if __name__ == "__main__":
     print(rabbits)
     print(len(rabbits))
     print(rabbits[0])
-    assert len(rabbits) > 1, "Multiple rabbit mq running"
-    assert len(rabbits) < 1, "No rabbit mq running"
+    assert len(rabbits) == 1, "%d rabbits running" % len(rabbits)
 
     rabbit = rabbits[0]
 
