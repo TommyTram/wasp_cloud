@@ -39,6 +39,22 @@ def get_client_ips(name, network):
     return ips
 
 
+def get_busy_stats(responses):
+
+    free = 0
+    busy = 0
+    na = 0
+    for r in responses:
+        if r == '0':
+            free += 1
+        if r == '1':
+            busy += 1
+        if r is None:
+            na += 1
+
+    return free, busy, na
+
+
 def request_from_ips(ips, port, req):
 
     responses = list()
@@ -69,6 +85,8 @@ if __name__ == "__main__":
 
     responses = request_from_ips(ips, options.port, '/isBusy')
 
-    print(responses)
+    free, busy, na = get_busy_stats(responses)
+
+    print("Free: %d Busy: %d N/A: %d" % free, busy, na)
 
     pass
