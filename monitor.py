@@ -24,7 +24,7 @@ def request(ip, port, uri):
         return data
 
     except URLError, e:
-        print 'URLError:', e
+        print "URLError (%s):" % request, e
 
         return None
 
@@ -40,7 +40,7 @@ def get_client_ips(name, network):
 
         if network in c.networks:
 
-            c_net = c.networks[options.network]
+            c_net = c.networks[network]
             if len(c_net) > 0:
                 c_ip = c_net[0]
                 ips.append(c_ip)
