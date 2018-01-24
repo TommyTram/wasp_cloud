@@ -39,6 +39,13 @@ def get_client_ips(name, network):
     return ips
 
 
+def requests_from_ips(req, ips):
+
+    responses = list()
+    for ip in ips:
+        responses.append(request(ip, req))
+
+
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -55,5 +62,9 @@ if __name__ == "__main__":
     ips = get_client_ips(options.backendname, options.network)
 
     print(ips)
+
+    responses = request_form_ips(ips, '/IsBusy')
+
+    print(responses)
 
     pass
