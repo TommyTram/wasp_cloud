@@ -39,7 +39,7 @@ def get_client_ips(name, network):
     return ips
 
 
-def requests_from_ips(req, ips):
+def request_from_ips(req, ips):
 
     responses = list()
     for ip in ips:
