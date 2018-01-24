@@ -54,6 +54,9 @@ if __name__ == "__main__":
 
     backends = manager.list_search({"name": options.backendname})
 
+    ssh = SSHClient()
+    ssh.load_system_host_keys()
+
     for b in backends:
         assert options.network in b.networks, "No such network %s" % options.network
 
@@ -61,7 +64,13 @@ if __name__ == "__main__":
         if len(b_net) > 0:
             b_ip = b_net[0]
 
-            print(b_ip)
+            print("backend ip:" + b_ip)
+
+            ssh.connect(b_ip)
+            scp = SCPClient(ssh.get_transport())
+
+            scp.put('client_credentials.txt', 'credentials.txt')
+            ssh.close()
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
 
