@@ -8,10 +8,12 @@ from scp import SCPClient  # pip install scp
 
 
 def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
+
+    manager = Manager()
+    clients = manager.list_search({"name": name})
+
     ssh = SSHClient()
     ssh.load_system_host_keys()
-
-    clients = manager.list_search({"name": name})
 
     for c in clients:
         assert network in c.networks, "No such network %s" % network
@@ -27,6 +29,26 @@ def push_credentials(name, network, local_file='client_credentials.txt', remote_
 
             scp.put(local_file, remote_file)
             ssh.close()
+
+
+def get_rabbit_ip(name):
+
+    manager = Manager()
+    rabbits = manager.list_search({"name": name})
+
+    assert len(rabbits) == 1, "%d rabbits running" % len(rabbits)
+
+    rabbit = rabbits[0]
+
+    assert options.network in rabbit.networks, "No such network %s" % options.network
+
+    rabbit_network = rabbit.networks[options.network]
+
+    assert len(rabbit_network) > 0, "No ips found"
+
+    rabbit_ip = rabbit_network[0]
+
+    return rabbit_ip
 
 
 if __name__ == "__main__":
@@ -47,23 +69,7 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    manager = Manager()
-
-    rabbits = manager.list_search({"name": options.rabbitname})
-
-    assert len(rabbits) == 1, "%d rabbits running" % len(rabbits)
-
-    rabbit = rabbits[0]
-
-    assert options.network in rabbit.networks, "No such network %s" % options.network
-
-    rabbit_network = rabbit.networks[options.network]
-
-    if len(rabbit_network) > 0:
-        rabbit_ip = rabbit_network[0]
-    else:
-        print("no ip found...")
-        rabbit_ip = "error"
+    rabbit_ip = get_rabbit_ip(options.rabbitname)
 
     print("rabbit ip: " + rabbit_ip)
 
