@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     print("rabbit ip: " + rabbit_ip)
 
-    with f = open('client_credentials.txt', 'w'):
+    with open('client_credentials.txt', 'w') as f:
         config = ''.join(f.readlines())
         re.sub(r'\bserver\b', r"server=" + rabbit_ip, config)
         f.write(yourTxt)
