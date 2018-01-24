@@ -1,4 +1,4 @@
-
+import ConfigParser
 from optparse import OptionParser
 from vmanager import Manager
 import re
