@@ -28,6 +28,7 @@ def cpuLoad():
 
 def callback(ch, method, properties, body):
     global isBusyState
+    global os_token_file
     isBusyState = "1"
     print(" [x] Processing %r" % body)
 
@@ -36,8 +37,8 @@ def callback(ch, method, properties, body):
     auth_path = "https://xerces.ericsson.net:5000/v3/"
     container = "CloudStoring"
 
-    with open('/home/ubuntu/os_token') as f:
-        os_token = myfile.read().replace('\n', '')
+    with open(os_token_file) as f:
+        os_token = f.read().replace('\n', '')
 
     #downloadPath = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
 
@@ -108,7 +109,11 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option('-c', '--credential', dest='credentialFile',
                       help='Path to CREDENTIAL file', metavar='CREDENTIALFILE')
+    parser.add_option('-t', '--os_token', dest='osTokenFile',
+                      default='~ubuntu/os_token', help='Path to OSTOKEN file', metavar='OSTOKEN')
     (options, args) = parser.parse_args()
+
+    os_token_file = options.osTokenFile
 
     jobs = []
     if options.credentialFile:
