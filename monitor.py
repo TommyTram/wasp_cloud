@@ -87,6 +87,6 @@ if __name__ == "__main__":
 
     free, busy, na = get_busy_stats(responses)
 
-    print("Free: %d Busy: %d N/A: %d".format(free, busy, na))
+    print("Free: '{0}' Busy: '{1}' N/A: '{2}'".format(free, busy, na))
 
     pass
