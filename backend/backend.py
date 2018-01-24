@@ -32,10 +32,10 @@ def callback(ch, method, properties, body):
         fileName = downloadUrl.rpartition("/")[2]
         fileLocation = "/tmp/"
         # Open url
-		rsp = urllib2.urlopen(downloadUrl)
-		
-		with open(fileLocation + fileName,'wb') as f:
-    		f.write(rsp.read())
+        rsp = urllib2.urlopen(downloadUrl)
+
+        with open(fileLocation + fileName,'wb') as f:
+        	f.write(rsp.read())
 
 
 
