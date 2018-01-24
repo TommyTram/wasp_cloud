@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
         print(config)
 
-        config = re.sub(r'\bserver\b', r"server=" + rabbit_ip, config)
+        config = re.sub(r'\bserver=\b', r"server=" + rabbit_ip, config)
 
     with open('client_credentials.txt', 'w') as f:
         print(config)
