@@ -91,6 +91,7 @@ class Manager:
         # print(instance.networks)
         # ip=instance.networks['CloudCourse'][0]
         print (instance.networks[self.net_id])  # ("ipaddress:"+ip);
+        return instance.networks[self.net_id]
 
     def describe(self, vm):
         instance = self.nova.servers.find(name=vm)
