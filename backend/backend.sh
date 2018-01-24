@@ -11,4 +11,4 @@ sudo apt-get install -y python-pip
 sudo apt-get install -y python-pika
 
 # echo "Cloning repo with WASP"
-git clone https://github.com/TommyTram/wasp_cloud.git
+git clone https://github.com/TommyTram/wasp_cloud.git ~ubuntu/wasp_cloud
