@@ -37,8 +37,10 @@ class Manager:
         sess = session.Session(auth=auth)
         self.nova = NovaClient("2", session=sess)
 
-    def create(self, name=""):
-        image = self.nova.images.find(name=Manager.DEFAULT_IMAGE)
+    def create(self, name="", image=None):
+        if image is None:
+            image = Manager.DEFAULT_IMAGE
+        image = self.nova.images.find(name=image)
         flavor = self.nova.flavors.find(name=Manager.DEFAULT_FLAVOUR)
         net = self.nova.networks.find(label=self.net_id)
         nics = [{'net-id': net.id}]
@@ -63,7 +65,7 @@ class Manager:
         return
 
     def list_search(self, search_opts=None):
-        return self.nova.servers.list(search_opts=search_opts)
+        self.nova.servers.list(search_opts=search_opts)
 
     def terminate(self, vm=""):
         server_exists = False

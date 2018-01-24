@@ -6,6 +6,13 @@ from urllib2 import Request, urlopen, URLError
 import urlparse
 
 
+def start_vm(name, image, start_script):
+
+    manager = Manager(start_script=start_script)
+
+    manager.create(name=name, image=image)
+
+
 def request(ip, port, uri):
     # requst = "http://ip/uri"
     # urlparse.urljoin(ip, uri))
