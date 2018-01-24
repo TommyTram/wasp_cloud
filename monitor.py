@@ -43,6 +43,7 @@ def request_from_ips(req, ips):
 
     responses = list()
     for ip in ips:
+        print(ip)
         responses.append(request(ip, req))
 
 
