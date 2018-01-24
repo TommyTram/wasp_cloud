@@ -5,6 +5,7 @@ import ConfigParser
 import time
 from flask import Flask
 import threading
+import psutil
 
 app = Flask(__name__)
 isBusyState = "0"
@@ -12,6 +13,11 @@ isBusyState = "0"
 @app.route("/isBusy")
 def isBusy():
     return isBusyState
+
+@app.route("/cpuLoad")
+def cpuLoad():
+	return str(psutil.cpu_percent())
+
 
 def callback(ch, method, properties, body):
         global isBusyState
@@ -67,4 +73,3 @@ if __name__=="__main__":
                 j.join()
 
 
-                

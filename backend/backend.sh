@@ -10,6 +10,7 @@ sudo apt-get install -y python-dev
 sudo apt-get install -y python-pip
 sudo apt-get install -y python-pika
 sudo pip install flask
+sudo pip install psutil
 
 # echo "Cloning repo with WASP"
 git clone https://github.com/TommyTram/wasp_cloud.git ~ubuntu/wasp_cloud
