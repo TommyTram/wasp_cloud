@@ -76,13 +76,15 @@ def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/
         response = urllib2.urlopen(req)
         headers = dict(response.info())
 
-        print(headers)
+        os_token = headers['x-subject-token']
 
-        print(response.read())
+        return os_token
 
     except urllib2.HTTPError as e:
         error_message = e.read()
         print error_message
+
+        return None
 
 
 if __name__ == "__main__":
@@ -113,8 +115,15 @@ if __name__ == "__main__":
     connection["username"] = config.get('auth', 'username')
     connection["password"] = config.get('auth', 'password')
 
-    get_token(connection["username"], connection["password"],
-              connection["auth_url"], connection["user_domain_name"])
+    os_token = get_token(connection["username"], connection["password"],
+                         connection["auth_url"], connection["user_domain_name"])
+
+    if os_token is not None:
+        with open('os_token', 'w') as f:
+            f.write(os_token)
+
+        push_credentials('backend', options.network,
+                         local_file='os_token', remote_file='os_token')
 
     rabbit_ip = get_rabbit_ip(options.rabbitname)
 
