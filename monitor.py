@@ -58,6 +58,15 @@ def get_busy_stats(responses):
     return free, busy, na
 
 
+def sum_cpu_load(responses):
+
+    sum = 0.0
+    for key in responses:
+        sum += float(responses[key])
+
+    return sum
+
+
 def request_from_ips(ips, port, req):
 
     responses = dict()
@@ -96,9 +105,10 @@ def get_stats(backendname, network, port):
     busy_resp = request_from_ips(ips, port, '/isBusy')
     free, busy, na = get_busy_stats(busy_resp)
 
-    cpu = request_from_ips(ips, port, '/cpuLoad')
+    cpu_loads = request_from_ips(ips, port, '/cpuLoad')
 
     #cpu = get_cpu_stats(cpu_resp)
+    cpu = sum_cpu_load(cpu_loads)
 
     return free, busy, na, cpu
 
