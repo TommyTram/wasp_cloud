@@ -37,7 +37,7 @@ def callback(ch, method, properties, body):
     auth_path = "https://xerces.ericsson.net:5000/v3/"
     container = "CloudStoring"
 
-    with open(os_token_file) as f:
+    with open(os.path.expanduser(os_token_file)) as f:
         os_token = f.read().replace('\n', '')
 
     #downloadPath = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
