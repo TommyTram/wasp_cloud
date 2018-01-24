@@ -65,6 +65,17 @@ def request_from_ips(ips, port, req):
     return responses
 
 
+def get_busy(backendname, network, port, req='/isBusy'):
+
+    ips = get_client_ips(backendname, network)
+
+    responses = request_from_ips(ips, port, req)
+
+    free, busy, na = get_busy_stats(responses)
+
+    return free, busy, na
+
+
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -81,11 +92,8 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    ips = get_client_ips(options.backendname, options.network)
-
-    responses = request_from_ips(ips, options.port, '/isBusy')
-
-    free, busy, na = get_busy_stats(responses)
+    free, busy, na = get_stats(
+        options.backendname, options.network, options, port)
 
     print("Free: '{0}' Busy: '{1}' N/A: '{2}'".format(free, busy, na))
 
