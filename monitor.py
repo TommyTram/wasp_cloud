@@ -60,8 +60,7 @@ def request_from_ips(ips, port, req):
 
     responses = dict()
     for ip in ips:
-        print(ip)
-        responses(ip) = request(ip, port, req)
+        responses[ip] = request(ip, port, req)
 
     return responses
 
