@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     connection = {}
 
-    connection["user_domain_name"] = config.get('user_domain_name', 'port')
+    connection["user_domain_name"] = config.get('auth', 'user_domain_name')
     connection["auth_url"] = config.get('auth', 'auth_url')
     connection["username"] = config.get('auth', 'username')
     connection["password"] = config.get('auth', 'password')
