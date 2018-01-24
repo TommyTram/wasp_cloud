@@ -35,6 +35,8 @@ if __name__ == "__main__":
     if len(rabbit_network) < 0:
         rabbit_ip = rabbit_network[0]
     else:
+        print("no ip found...")
+        rabbit_ip = "error"
 
     print("rabbit ip: " + rabbit_ip)
 
