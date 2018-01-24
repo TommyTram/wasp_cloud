@@ -42,13 +42,14 @@ if __name__ == "__main__":
 
     print("rabbit ip: " + rabbit_ip)
 
-    with open('client_credentials.txt', 'rw') as f:
+    with open('client_credentials.txt.template', 'r') as f:
         config = ''.join(f.readlines())
 
         print(config)
 
         config = re.sub(r'\bserver\b', r"server=" + rabbit_ip, config)
 
+    with open('client_credentials.txt', 'w') as f:
         print(config)
         f.write(config)
 
