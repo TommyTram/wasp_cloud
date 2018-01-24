@@ -7,14 +7,14 @@ from paramiko import SSHClient
 from scp import SCPClient  # pip install scp
 
 
-def push_credentials(name, local_file='client_credentials.txt', remote_file='credentials.txt'):
+def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
     ssh = SSHClient()
     ssh.load_system_host_keys()
 
     clients = manager.list_search({"name": name})
 
     for c in clients:
-        assert name in c.networks, "No such network %s" % options.network
+        assert network in c.networks, "No such network %s" % network
 
         c_net = c.networks[options.network]
         if len(c_net) > 0:
@@ -74,8 +74,8 @@ if __name__ == "__main__":
     with open('client_credentials.txt', 'w') as f:
         f.write(config)
 
-    push_credentials('backend')
-    push_credentials('frontend')
+    push_credentials('backend', options.network)
+    push_credentials('frontend', options.network)
 
     # ssh = SSHClient()
     # ssh.load_system_host_keys()
