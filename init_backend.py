@@ -15,7 +15,16 @@ if __name__ == "__main__":
 
     manager = Manager()
 
-    print(manager.list_search({"name": options.rabbitname}))
+    rabbits = manager.list_search({"name": options.rabbitname})
+
+    assert len(rabbits) > 1 "Multiple rabbit mq running"
+    assert len(rabbits) < 1 "No rabbit mq running"
+
+    rabbit = rabbits[0]
+
+    rabbit_ip = rabbit.net_id[0]
+
+    print("rabbit ip: " + rabbit_ip)
 
     # rabbit_ip = manager.get_IP(vm=options.rabbitname)[0]
 
