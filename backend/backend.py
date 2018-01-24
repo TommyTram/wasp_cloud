@@ -2,13 +2,14 @@
 import pika
 from optparse import OptionParser
 import ConfigParser
-
+import time
 
 def callback(ch, method, properties, body):
 	print(" [x] Processing %r" % body)
 
 	ch.basic_ack(delivery_tag = method.delivery_tag)
-
+	print(" [x] Process done ---")
+	
 def receive(connection_info=None):
 	qname = "wasp"
 	credentials = pika.PlainCredentials(connection_info["username"], connection_info["password"])
