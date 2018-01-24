@@ -35,7 +35,7 @@ def callback(ch, method, properties, body):
     downloadPath = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
 
     # Extract file name
-    fileName = body
+    filename = body
 
     #_, ext = os.path.splitext(fileName)
 
