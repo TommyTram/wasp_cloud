@@ -1,11 +1,11 @@
 from optparse import OptionParser
-
+from vmanager import Manager
 from urllib2 import Request, urlopen, URLError
 import urlparse
 
 
 def request(ip, uri):
-    #requst = "http://ip/uri"
+    # requst = "http://ip/uri"
     # urlparse.urljoin(ip, uri))
     request = urlparse.urljoin("http://" + ip, uri)
 
