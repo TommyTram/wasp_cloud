@@ -6,6 +6,8 @@ import time
 from flask import Flask
 import threading
 import psutil
+import urllib2
+import os
 
 app = Flask(__name__)
 isBusyState = "0"
@@ -24,8 +26,23 @@ def callback(ch, method, properties, body):
         isBusyState = "1"
         print(" [x] Processing %r" % body)
 
+        # Read download url
+        downloadUrl = body
+        # Extract file name
+        fileName = downloadUrl.rpartition("/")[2]
+        fileLocation = "/tmp/"
+        # Open url
+		rsp = urllib2.urlopen(downloadUrl)
+		
+		with open(fileLocation + fileName,'wb') as f:
+    		f.write(rsp.read())
+
+
+
         ch.basic_ack(delivery_tag = method.delivery_tag)
         time.sleep(3)
+        #os.remove(fileLocation + fileName)
+
         print(" [x] Process done ---")
         isBusyState = "0"
 
