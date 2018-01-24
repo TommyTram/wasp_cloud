@@ -7,6 +7,7 @@ from flask import Flask
 import threading
 import psutil
 import urllib2
+import urllib
 import os
 from tempfile import mkstemp
 
@@ -38,7 +39,7 @@ def callback(ch, method, properties, body):
 
     #_, ext = os.path.splitext(fileName)
 
-    url_in = urllib2.urljoin(downloadPath, filename)
+    url_in = urlparse.urljoin(downloadPath, filename)
 
     #fileLocation = "/tmp/"
 
