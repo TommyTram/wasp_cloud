@@ -21,4 +21,4 @@ do
       sleep 2
 done
 
-python ~ubuntu/wasp_cloud/backend/backend.py
+python ~ubuntu/wasp_cloud/backend/backend.py -c ~ubuntu/credentials.txt
