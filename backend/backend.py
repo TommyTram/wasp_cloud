@@ -27,15 +27,15 @@ def callback(ch, method, properties, body):
         print(" [x] Processing %r" % body)
 
         # Read download url
-        downloadUrl = body
+        #downloadUrl = body
         # Extract file name
-        fileName = downloadUrl.rpartition("/")[2]
-        fileLocation = "/tmp/"
+        #fileName = downloadUrl.rpartition("/")[2]
+        #fileLocation = "/tmp/"
         # Open url
-        rsp = urllib2.urlopen(downloadUrl)
+        #rsp = urllib2.urlopen(downloadUrl)
 
-        with open(fileLocation + fileName,'wb') as f:
-        	f.write(rsp.read())
+        #with open(fileLocation + fileName,'wb') as f:
+        # 	f.write(rsp.read())
 
 
 
