@@ -65,15 +65,17 @@ def request_from_ips(ips, port, req):
     return responses
 
 
-def get_stats(backendname, network, port, req='/isBusy'):
+def get_stats(backendname, network, port):
 
     ips = get_client_ips(backendname, network)
+    busy_resp = request_from_ips(ips, port, '/isBusy')
+    free, busy, na = get_busy_stats(busy_resp)
 
-    responses = request_from_ips(ips, port, req)
+    cpu = request_from_ips(ips, port, '/cpuLoad')
 
-    free, busy, na = get_busy_stats(responses)
+    #cpu = get_cpu_stats(cpu_resp)
 
-    return free, busy, na
+    return free, busy, na, cpu
 
 
 if __name__ == "__main__":
@@ -92,9 +94,11 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    free, busy, na = get_stats(
+    free, busy, na, cpu = get_stats(
         options.backendname, options.network, options.port)
 
     print("Free: {0} Busy: {1} N/A: {2}".format(free, busy, na))
+
+    print(cpu)
 
     pass
