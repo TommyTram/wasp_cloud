@@ -93,7 +93,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     free, busy, na = get_stats(
-        options.backendname, options.network, options, port)
+        options.backendname, options.network, options.port)
 
     print("Free: '{0}' Busy: '{1}' N/A: '{2}'".format(free, busy, na))
 
