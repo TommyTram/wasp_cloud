@@ -4,6 +4,7 @@ from vmanager import Manager
 import re
 
 from paramiko import SSHClient
+import paramiko
 from scp import SCPClient  # pip install scp
 
 
