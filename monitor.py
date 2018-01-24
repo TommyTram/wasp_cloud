@@ -124,9 +124,9 @@ if __name__ == "__main__":
     free, busy, na, cpu = get_stats(
         options.backendname, options.network, options.port)
 
-    get_queue_length(options.credentialFile)
+    queue = get_queue_length(options.credentialFile)
 
-    print("Free: {0} Busy: {1} N/A: {2}".format(free, busy, na))
+    print("Free: {0} Busy: {1} N/A: {2} Queue: {3}".format(free, busy, na, queue))
 
     print(cpu)
 
