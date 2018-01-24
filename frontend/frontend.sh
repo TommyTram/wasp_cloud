@@ -13,9 +13,5 @@ sudo apt-get install -y python-pika
 # install python Flask web framework
 sudo pip install Flask
 
-# prepare application directory  
-mkdir /var/www
-cd /var/www
-
 # echo "Cloning repo with WASP2"
 git clone https://github.com/TommyTram/wasp_cloud.git
