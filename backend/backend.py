@@ -27,7 +27,7 @@ def callback(ch, method, properties, body):
         print(" [x] Processing %r" % body)
 
         # Read download url
-        downloadUrl = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring"
+        downloadUrl = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
         
         # Extract file name
         fileName = body
@@ -35,7 +35,7 @@ def callback(ch, method, properties, body):
         # Open url
 
         try:
-            rsp = urllib2.urlopen(downloadUrl)
+            rsp = urllib2.urlopen(downloadUrl + fileName)
 
             with open(fileLocation + fileName,'wb') as f:
              	f.write(rsp.read())
