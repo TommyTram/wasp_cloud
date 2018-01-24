@@ -46,6 +46,8 @@ def request_from_ips(ips, port, req):
         print(ip)
         responses.append(request(ip, port, req))
 
+    return responses
+
 
 if __name__ == "__main__":
 
