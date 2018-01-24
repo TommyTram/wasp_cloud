@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     rabbit_network = rabbit.networks[options.network]
 
-    if len(rabbit_network) < 0:
+    if len(rabbit_network) > 0:
         rabbit_ip = rabbit_network[0]
     else:
         print("no ip found...")
