@@ -7,7 +7,7 @@ from flask import Flask
 import threading
 import psutil
 import urllib2
-import urllib
+import urlparse
 import os
 from tempfile import mkstemp
 
