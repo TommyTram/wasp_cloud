@@ -32,14 +32,21 @@ def callback(ch, method, properties, body):
     print(" [x] Processing %r" % body)
 
     # Read download url
-    downloadPath = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
+
+    auth_path = "https://xerces.ericsson.net:5000/v3/"
+    container = "CloudStoring"
+
+    with open('~ubuntu/os_token') as f:
+        os_token = myfile.read().replace('\n', '')
+
+    #downloadPath = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
 
     # Extract file name
     filename = body
 
-    #_, ext = os.path.splitext(fileName)
+    filebody, ext = os.path.splitext(filename)
 
-    url_in = urlparse.urljoin(downloadPath, filename)
+    #url_in = urlparse.urljoin(downloadPath, filename)
 
     #fileLocation = "/tmp/"
 
@@ -49,10 +56,14 @@ def callback(ch, method, properties, body):
     # Open url
 
     try:
-        rsp = urllib2.urlopen(url_in)
+        cmd = "sudo swift -A {1} --os-auth-token {2} download {3} {4}".format(
+            auth_path, os_token, container, filename)
 
-        with open(file_in, 'w') as f:
-            f.write(rsp.read())
+        os.system(cmd)
+        #rsp = urllib2.urlopen(url_in)
+
+        # with open(file_in, 'w') as f:
+        #    f.write(rsp.read())
     except:
         print("Couldn't download")
 
