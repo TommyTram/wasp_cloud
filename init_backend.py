@@ -10,6 +10,7 @@ from scp import SCPClient  # pip install scp
 import json
 import urllib2
 import urlparse
+import subprocess
 
 
 def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
@@ -87,11 +88,12 @@ def get_token(username, password, os_project_id, os_auth_url='https://xerces.eri
     #     return None
 
     try:
-        cmd = "swift --os-auth-url {0} --os-user-domain-name {1} --os-username {2} --os-password {3} --os-project-id {4} auth > os_token".format(
+        cmd = "swift --os-auth-url {0} --os-user-domain-name {1} --os-username {2} --os-password {3} --os-project-id {4} auth".format(
             os_auth_url, os_user_domain_name, username, password, os_project_id)
 
         print(cmd)
-        os.system(cmd)
+        with open('os_token') as out:
+            return_code = subprocess.call(cmd, stdout=out)
     except:
         print "Error getting swift token"
 
