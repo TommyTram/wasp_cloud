@@ -130,15 +130,11 @@ if __name__ == "__main__":
     connection["password"] = config.get('auth', 'password')
     connection["project_id"] = config.get('auth', 'project_domain_id')
 
-    os_token = get_token(connection["username"], connection["password"], connection["project_id"],
-                         connection["auth_url"], connection["user_domain_name"])
+    get_token(connection["username"], connection["password"], connection["project_id"],
+              connection["auth_url"], connection["user_domain_name"])
 
-    if os_token is not None:
-        with open('os_token', 'w') as f:
-            f.write(os_token)
-
-        push_credentials('backend', options.network,
-                         local_file='os_token', remote_file='os_token')
+    push_credentials('backend', options.network,
+                     local_file='os_token', remote_file='os_token')
 
     rabbit_ip = get_rabbit_ip(options.rabbitname)
 
