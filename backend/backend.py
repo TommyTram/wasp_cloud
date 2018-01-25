@@ -85,7 +85,7 @@ def callback(ch, method, properties, body):
         print("Couldn't remove file")
 
     try:
-        cmd = os_token + "swift upload -o {0} {1}".format(
+        cmd = os_token + "swift upload {0} {1}".format(
             container, file_out)
 
         print(cmd)
