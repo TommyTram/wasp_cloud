@@ -91,7 +91,7 @@ def get_token(username, password, os_project_id, os_auth_url='https://xerces.eri
             os_auth_url, os_user_domain_name, username, password, os_project_id)
 
         os.system(cmd)
-    else:
+    except:
         print "Error getting swift token"
 
 
