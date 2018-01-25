@@ -65,7 +65,7 @@ class Manager:
         return
 
     def list_search(self, search_opts=None):
-        self.nova.servers.list(search_opts=search_opts)
+        return self.nova.servers.list(search_opts=search_opts)
 
     def terminate(self, vm=""):
         server_exists = False

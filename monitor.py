@@ -4,7 +4,8 @@ import ConfigParser
 from vmanager import Manager
 from urllib2 import Request, urlopen, URLError
 import urlparse
-
+import os.path
+import time
 
 def start_vm(name, image, start_script):
 
@@ -24,7 +25,7 @@ def request(ip, port, uri):
         return data
 
     except URLError, e:
-        print 'URLError:', e
+        print "URLError (%s):" % request, e
 
         return None
 
@@ -32,7 +33,7 @@ def request(ip, port, uri):
 def get_client_ips(name, network):
 
     manager = Manager()
-    clients = manager.list_search({"name": options.backendname})
+    clients = manager.list_search({"name": name})
 
     ips = list()
     for c in clients:
@@ -40,7 +41,7 @@ def get_client_ips(name, network):
 
         if network in c.networks:
 
-            c_net = c.networks[options.network]
+            c_net = c.networks[network]
             if len(c_net) > 0:
                 c_ip = c_net[0]
                 ips.append(c_ip)
@@ -139,13 +140,23 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    free, busy, na, cpu = get_stats(
-        options.backendname, options.network, options.port)
+    log = open(time.strftime("%Y%m%d-%H%M%S") + ".csv","w+")
+    log.write("free,busy,N/A,queue,cpu \n")
+    try:
+        while (True):
 
-    queue = get_queue_length(options.credentialFile)
+            free, busy, na, cpu = get_stats(
+                options.backendname, options.network, options.port)
 
-    print("Free: {0} Busy: {1} N/A: {2} Queue: {3}".format(free, busy, na, queue))
+            queue = get_queue_length(options.credentialFile)
 
-    print(cpu)
+            print("Free: {0} Busy: {1} N/A: {2} Queue: {3}".format(free, busy, na, queue))
+
+            print(cpu)
+
+            log.write("{0},{1},{2},{3},{4}\n".format(free, busy, na, queue, cpu))
+            time.sleep(1)
+    except KeyboardInterrupt:
+        log.close()
 
     pass

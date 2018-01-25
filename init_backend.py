@@ -1,4 +1,4 @@
-
+import ConfigParser
 from optparse import OptionParser
 from vmanager import Manager
 import re
@@ -6,6 +6,11 @@ import re
 from paramiko import SSHClient
 import paramiko
 from scp import SCPClient  # pip install scp
+
+import json
+import urllib2
+import urlparse
+import subprocess
 
 
 def push_credentials(name, network, local_file='client_credentials.txt', remote_file='credentials.txt'):
@@ -51,6 +56,51 @@ def get_rabbit_ip(name):
     return rabbit_ip
 
 
+def get_token(username, password, os_project_id, os_auth_url='https://xerces.ericsson.net:5000/v3', os_user_domain_name='xerces'):
+
+    # curl -v -s -X POST $OS_AUTH_URL/auth/tokens   -H "Content-Type: application/json"   -d '{ "auth": { "identity": { "methods": ["password"],"password": {"user": {"domain": {"name": "'"$OS_USER_DOMAIN_NAME"'"},"name": "'"$OS_USERNAME"'", "password": "'"$OS_PASSWORD"'"} } } } }
+
+    # data = {"auth": {"identity": {"methods": ["password"], "password": {
+    #     "user": {"domain": {"name": os_user_domain_name},
+    #              "name": username,
+    #              "password": password}
+    # }}}}
+
+    # url = urlparse.urljoin(os_auth_url + "/", 'auth/tokens')
+    # print(json.dumps(data))
+    # print(url)
+
+    # req = urllib2.Request(url, json.dumps(
+    #     data), {'Content-Type': 'application/json'})
+
+    # try:
+    #     response = urllib2.urlopen(req)
+    #     headers = dict(response.info())
+
+    #     os_token = headers['x-subject-token']
+
+    #     return os_token
+
+    # except urllib2.HTTPError as e:
+    #     error_message = e.read()
+    #     print error_message
+
+    #     return None
+
+    try:
+
+        # cmd = "swift --os-auth-url {0} --os-user-domain-name {1} --os-username {2} --os-password {3} --os-project-id {4} auth".format(
+        #    os_auth_url, os_user_domain_name, username, password, os_project_id)
+
+        cmd = ['swift', '--os-auth-url', os_auth_url, '--os-user-domain-name', os_user_domain_name,
+               '--os-username', username, '--os-password', password, '--os-project-id', os_project_id, 'auth']
+
+        with open('os_token', 'w') as out:
+            return_code = subprocess.call(cmd, stdout=out)
+    except:
+        print "Error getting swift token"
+
+
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -64,8 +114,27 @@ if __name__ == "__main__":
     parser.add_option('-n', '--network', dest='network',
                       help='network id',
                       default="tutorial_net", metavar='NETWORK')
+    parser.add_option('-c', '--credential', dest='credentialFile',
+                      help='Path to CREDENTIAL file', default='credentials.txt', metavar='CREDENTIALFILE')
 
     (options, args) = parser.parse_args()
+
+    config = ConfigParser.RawConfigParser()
+    config.read(options.credentialFile)
+
+    connection = {}
+
+    connection["user_domain_name"] = config.get('auth', 'user_domain_name')
+    connection["auth_url"] = config.get('auth', 'auth_url')
+    connection["username"] = config.get('auth', 'username')
+    connection["password"] = config.get('auth', 'password')
+    connection["project_id"] = config.get('auth', 'project_domain_id')
+
+    get_token(connection["username"], connection["password"], connection["project_id"],
+              connection["auth_url"], connection["user_domain_name"])
+
+    push_credentials('backend', options.network,
+                     local_file='os_token', remote_file='os_token')
 
     rabbit_ip = get_rabbit_ip(options.rabbitname)
 
