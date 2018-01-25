@@ -57,7 +57,7 @@ def callback(ch, method, properties, body):
     # Open url
 
     try:
-        cmd = os_token + "sudo swift download -o {0} {1} {2}".format(
+        cmd = os_token + "swift download -o {0} {1} {2}".format(
             file_in, container, filename)
 
         print(cmd)
