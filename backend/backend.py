@@ -84,6 +84,19 @@ def callback(ch, method, properties, body):
     except:
         print("Couldn't remove file")
 
+    try:
+        cmd = os_token + "swift upload -o {0} {1}".format(
+            container, file_out)
+
+        print(cmd)
+        os.system(cmd)
+        #rsp = urllib2.urlopen(url_in)
+
+        # with open(file_in, 'w') as f:
+        #    f.write(rsp.read())
+    except:
+        print("Couldn't upload")
+
     os.close(fd_in)
     os.close(fd_out)
 
