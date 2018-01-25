@@ -95,9 +95,8 @@ def get_token(username, password, os_project_id, os_auth_url='https://xerces.eri
         cmd = ['swift', '--os-auth-url', os_auth_url, '--os-user-domain-name', os_user_domain_name,
                '--os-username', username, '--os-password', password, '--os-project-id', os_project_id, 'auth']
 
-        print(cmd)
         with open('os_token', 'w') as out:
-            return_code = subprocess.call(cmd, out)
+            return_code = subprocess.call(cmd, stdout=out)
     except:
         print "Error getting swift token"
 
