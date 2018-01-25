@@ -55,36 +55,42 @@ def get_rabbit_ip(name):
     return rabbit_ip
 
 
-def get_token(username, password, os_auth_url='https://xerces.ericsson.net:5000/v3', os_user_domain_name='xerces'):
+def get_token(username, password, os_project_id, os_auth_url='https://xerces.ericsson.net:5000/v3', os_user_domain_name='xerces'):
 
     # curl -v -s -X POST $OS_AUTH_URL/auth/tokens   -H "Content-Type: application/json"   -d '{ "auth": { "identity": { "methods": ["password"],"password": {"user": {"domain": {"name": "'"$OS_USER_DOMAIN_NAME"'"},"name": "'"$OS_USERNAME"'", "password": "'"$OS_PASSWORD"'"} } } } }
 
-    data = {"auth": {"identity": {"methods": ["password"], "password": {
-        "user": {"domain": {"name": os_user_domain_name},
-                 "name": username,
-                 "password": password}
-    }}}}
+    # data = {"auth": {"identity": {"methods": ["password"], "password": {
+    #     "user": {"domain": {"name": os_user_domain_name},
+    #              "name": username,
+    #              "password": password}
+    # }}}}
 
-    url = urlparse.urljoin(os_auth_url + "/", 'auth/tokens')
-    print(json.dumps(data))
-    print(url)
+    # url = urlparse.urljoin(os_auth_url + "/", 'auth/tokens')
+    # print(json.dumps(data))
+    # print(url)
 
-    req = urllib2.Request(url, json.dumps(
-        data), {'Content-Type': 'application/json'})
+    # req = urllib2.Request(url, json.dumps(
+    #     data), {'Content-Type': 'application/json'})
+
+    # try:
+    #     response = urllib2.urlopen(req)
+    #     headers = dict(response.info())
+
+    #     os_token = headers['x-subject-token']
+
+    #     return os_token
+
+    # except urllib2.HTTPError as e:
+    #     error_message = e.read()
+    #     print error_message
+
+    #     return None
 
     try:
-        response = urllib2.urlopen(req)
-        headers = dict(response.info())
+        cmd = "swift --os-auth-url {0} --os-user-domain-name {1} --os-username {2} --os-password {3} --os-project-id {4} auth > os_token".format(
+            os_auth_url, os_user_domain_name, username, password, os_project_id)
 
-        os_token = headers['x-subject-token']
-
-        return os_token
-
-    except urllib2.HTTPError as e:
-        error_message = e.read()
-        print error_message
-
-        return None
+        os.system(cmd)
 
 
 if __name__ == "__main__":
@@ -114,8 +120,9 @@ if __name__ == "__main__":
     connection["auth_url"] = config.get('auth', 'auth_url')
     connection["username"] = config.get('auth', 'username')
     connection["password"] = config.get('auth', 'password')
+    connection["project_id"] = config.get('auth', 'project_domain_id')
 
-    os_token = get_token(connection["username"], connection["password"],
+    os_token = get_token(connection["username"], connection["password"], connection["project_id"],
                          connection["auth_url"], connection["user_domain_name"])
 
     if os_token is not None:
