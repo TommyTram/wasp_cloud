@@ -38,7 +38,7 @@ def callback(ch, method, properties, body):
     container = "CloudStoring"
 
     with open(os.path.expanduser(os_token_file)) as f:
-        os_token = f.read().replace('\n', '')
+        os_token = f.read().replace('\n', ';')
 
     #downloadPath = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
 
