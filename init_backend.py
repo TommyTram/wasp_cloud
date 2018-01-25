@@ -88,9 +88,12 @@ def get_token(username, password, os_project_id, os_auth_url='https://xerces.eri
     #     return None
 
     try:
-        # --os-auth-url {0} --os-user-domain-name {1} --os-username {2} --os-password {3} --os-project-id {4} auth".format(
-        cmd = "swift"
-        # os_auth_url, os_user_domain_name, username, password, os_project_id)
+
+        # cmd = "swift --os-auth-url {0} --os-user-domain-name {1} --os-username {2} --os-password {3} --os-project-id {4} auth".format(
+        #    os_auth_url, os_user_domain_name, username, password, os_project_id)
+
+        cmd = ['swift', '--os-auth-url', os_auth_url, '--os-user-domain-name', os_user_domain_name,
+               '--os-username', username, '--os-password', password, '--os-project-id', os_project_id, 'auth']
 
         print(cmd)
         with open('os_token', 'w') as out:
