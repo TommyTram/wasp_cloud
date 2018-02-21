@@ -120,7 +120,9 @@ def get_stats(backendname, network, port):
     #cpu = get_cpu_stats(cpu_resp)
     #cpu = sum_cpu_load(cpu_loads)
 
-    return free, busy, na, cpu_loads
+    cpu = dict((k, v) for k, v in cpu_loads.iteritems() if v is not None)
+
+    return free, busy, na, cpu
 
 
 if __name__ == "__main__":
@@ -142,7 +144,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     log = open(time.strftime("%Y%m%d-%H%M%S") + ".csv", "w+")
-    log.write("free,busy,N/A,queue,cpu \n")
+    log.write("free,busy,N/A,queue,cpus \n")
     try:
         while (True):
 
@@ -151,15 +153,15 @@ if __name__ == "__main__":
 
             queue = get_queue_length(options.credentialFile)
 
-            cpu_str = [for '{}: {}'.format(key, val) cpu.iteritems()]
+            cpu_str = ['{}: {}'.format(key, val)
+                       for key, val in cpu.iteritems()]
 
             print(
                 "Free: {0} Busy: {1} N/A: {2} Queue: {3} CPU: {4}".format(free, busy, na, queue, cpu_str))
 
-            print(cpu)
-
             log.write("{0},{1},{2},{3},{4}\n".format(
-                free, busy, na, queue, ','.join(cpu)))
+                free, busy, na, queue, ','.join(cpu.values())))
+            log.flush()
             time.sleep(1)
     except KeyboardInterrupt:
         log.close()

@@ -1,5 +1,6 @@
 from flask import Flask
 import pika
+import uuid
 import ConfigParser
 from optparse import OptionParser
 
@@ -7,27 +8,41 @@ from optparse import OptionParser
 class Connection:
     def __init__(self, connection_info=None):
         self.connection_info = connection_info
-        self.credentials = pika.PlainCredentials(
-            self.connection_info["username"], self.connection_info["password"])
+        self.credentials = pika.PlainCredentials(self.connection_info["username"], self.connection_info["password"])
+        self.qname = self.connection_info["queue"]
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.connection_info["server"],
+                                                                            self.connection_info["port"], '/',
+                                                                            self.credentials))
+        self.channel = self.connection.channel()
+
+        #self.channel.queue_declare(queue=qname, durable=True)
+        result = self.channel.queue_declare(exclusive=True) 
+        self.callback_queue = result.method.queue
+
+    def __del__(self):
+        self.connection.close()
 
     def send_to_queue(self, message="Hello!"):
-        qname = self.connection_info["queue"]
+        #qname = self.connection_info["queue"]
 
-        connection = pika.BlockingConnection(pika.ConnectionParameters(self.connection_info["server"],
-                                                                       self.connection_info["port"], '/',
-                                                                       self.credentials))
-        channel = connection.channel()
+        #connection = pika.BlockingConnection(pika.ConnectionParameters(self.connection_info["server"],
+                                                 #                      self.connection_info["port"], '/',
+                                                  #                     self.credentials))
+        #channel = connection.channel()
 
-        channel.queue_declare(queue=qname, durable=True)
-
-        channel.basic_publish(exchange='',
-                              routing_key=qname,
+        #channel.queue_declare(queue=qname, durable=True)
+	corr_id = str(uuid.uuid4())
+        self.channel.basic_publish(exchange='',
+                              routing_key=self.qname,
                               body=message,
                               properties=pika.BasicProperties(
-                                  delivery_mode=2))
+                                  
+                                  delivery_mode=2,
+			          reply_to = self.callback_queue,
+                                  correlation_id = corr_id))
 
         print(" [x] Sent %s" % message)
-        connection.close()
+#        connection.close()
 
 
 app = Flask(__name__)

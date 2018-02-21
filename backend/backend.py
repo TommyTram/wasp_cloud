@@ -10,7 +10,7 @@ import urllib2
 import urlparse
 import os
 from tempfile import mkstemp
-
+import subprocess
 
 app = Flask(__name__)
 isBusyState = "0"
@@ -26,11 +26,20 @@ def cpuLoad():
     return str(psutil.cpu_percent())
 
 
-def callback(ch, method, properties, body):
+def failed(ch, method, fd_in, fd_out, redeliver=True):
+    global isBusyState
+    os.close(fd_in)
+    os.close(fd_out)
+    print(" [ ] Process failed")
+    ch.basic_nack(method.delivery_tag, False, redeliver)
+    isBusyState = "0"
+
+def callback(ch, method, props, body):
     global isBusyState
     global os_token_file
     isBusyState = "1"
     print(" [x] Processing %r" % body)
+    print(props)
 
     # Read download url
 
@@ -60,28 +69,43 @@ def callback(ch, method, properties, body):
         cmd = os_token + "swift download -o {0} {1} {2}".format(
             file_in, container, filename)
 
+        #cmd = ['os_token']
         print(cmd)
-        os.system(cmd)
+        #subprocess.call([cmd])
+        ret=os.system(cmd)
+        if ret!=0:
+            failed(ch,mehtod,fd_in,fd_out,False)
+            return
         #rsp = urllib2.urlopen(url_in)
 
         # with open(file_in, 'w') as f:
         #    f.write(rsp.read())
     except:
         print("Couldn't download")
+        failed(ch, method,fd_in,fd_out, False)
+        return
 
     try:
-        cmd = """sudo mencoder %s -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=3000 -oac copy -o %s""" % (
+        cmd = """mencoder %s -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=3000 -oac copy -o %s""" % (
             file_in, file_out)
-        os.system(cmd)
+        ret=os.system(cmd)
+        print(ret)
+        if ret!=0:
+            failed(ch,method,fd_in,fd_out)
+            return
+	
     except:
         print("Couldn't convert")
+        failed(ch, method,fd_in,fd_out)
+        return
 
-    ch.basic_ack(delivery_tag=method.delivery_tag)
     # time.sleep(3)
 
     try:
         os.remove(file_in)
     except:
+        failed(ch, method,fd_in,fd_out)
+        return
         print("Couldn't remove file")
 
     try:
@@ -95,13 +119,22 @@ def callback(ch, method, properties, body):
         # with open(file_in, 'w') as f:
         #    f.write(rsp.read())
     except:
+        failed(ch, method,fd_in,fd_out)
+        return
         print("Couldn't upload")
 
     os.close(fd_in)
     os.close(fd_out)
 
+    ch.basic_publish(exchange='',
+                     routing_key=props.reply_to,
+                     properties=pika.BasicProperties(correlation_id = \
+                                                     props.correlation_id),
+                     body='{} {}'.format(container, file_out))
+
     print(" [x] Process done ---")
     isBusyState = "0"
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 def receive(connection_info=None):
