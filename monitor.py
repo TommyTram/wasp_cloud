@@ -7,6 +7,7 @@ import urlparse
 import os.path
 import time
 
+
 def start_vm(name, image, start_script):
 
     manager = Manager(start_script=start_script)
@@ -117,9 +118,9 @@ def get_stats(backendname, network, port):
     cpu_loads = request_from_ips(ips, port, '/cpuLoad')
 
     #cpu = get_cpu_stats(cpu_resp)
-    cpu = sum_cpu_load(cpu_loads)
+    #cpu = sum_cpu_load(cpu_loads)
 
-    return free, busy, na, cpu
+    return free, busy, na, cpu_loads
 
 
 if __name__ == "__main__":
@@ -140,7 +141,7 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    log = open(time.strftime("%Y%m%d-%H%M%S") + ".csv","w+")
+    log = open(time.strftime("%Y%m%d-%H%M%S") + ".csv", "w+")
     log.write("free,busy,N/A,queue,cpu \n")
     try:
         while (True):
@@ -150,11 +151,13 @@ if __name__ == "__main__":
 
             queue = get_queue_length(options.credentialFile)
 
-            print("Free: {0} Busy: {1} N/A: {2} Queue: {3}".format(free, busy, na, queue))
+            print(
+                "Free: {0} Busy: {1} N/A: {2} Queue: {3} CPU: {4}".format(free, busy, na, queue, ','.join(cpu)))
 
             print(cpu)
 
-            log.write("{0},{1},{2},{3},{4}\n".format(free, busy, na, queue, cpu))
+            log.write("{0},{1},{2},{3},{4}\n".format(
+                free, busy, na, queue, ','.join(cpu)))
             time.sleep(1)
     except KeyboardInterrupt:
         log.close()
