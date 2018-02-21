@@ -6,6 +6,7 @@ from urllib2 import Request, urlopen, URLError
 import urlparse
 import os.path
 import time
+import datetime
 
 
 def start_vm(name, image, start_script):
