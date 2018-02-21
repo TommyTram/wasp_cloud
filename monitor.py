@@ -151,8 +151,10 @@ if __name__ == "__main__":
 
             queue = get_queue_length(options.credentialFile)
 
+            cpu_str = [for '{}: {}'.format(key, val) cpu.iteritems()]
+
             print(
-                "Free: {0} Busy: {1} N/A: {2} Queue: {3} CPU: {4}".format(free, busy, na, queue, ','.join(cpu)))
+                "Free: {0} Busy: {1} N/A: {2} Queue: {3} CPU: {4}".format(free, busy, na, queue, cpu_str))
 
             print(cpu)
 
