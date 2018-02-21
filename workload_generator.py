@@ -10,53 +10,47 @@ import urllib2
 import urlparse
 import os
 import requests
+import datetime
 
 idHolder = dict()
-logFileName = time.strftime("%Y%m%d-%H%M%S") + ".csv"
+logFileName = time.strftime("logs/wl_%Y%m%d-%H%M%S") + ".csv"
+
+
 def callback(ch, method, properties, body):
     global idHolder
     global logFileName
+    global connection
     # Get id of finished job and assign current time
     idX = properties.correlation_id
-    idHolder[idX][1] = time.time()
-
-    config = ConfigParser.RawConfigParser()
-    config.read('../credentials.txt')
-    connection = {}
-    connection["server"] = config.get('rabbit', 'server')
-    connection["port"] = int(config.get('rabbit', 'port'))
-    connection["queue"] = config.get('rabbit', 'queue')
-    connection["username"] = config.get('rabbit', 'username')
-    connection["password"] = config.get('rabbit', 'password')
-
-    qname = connection["queue"]
-    credentials = pika.PlainCredentials(
-        connection["username"], connection["password"])
-    connection = pika.BlockingConnection(pika.ConnectionParameters(connection["server"],
-                                                                   connection["port"], '/',
-                                                                   credentials))
-    channel = connection.channel()
-    res = channel.queue_declare(queue=qname, durable=True)
 
     # Find out queue size
-    queueSize = res.method.message_count
-    #Compute time taken for the job from frontend -> backend
-    timeTaken = idHolder[idX][1] - idHolder[idX][0]
-    print("Job id : ",idX, "took ", timeTaken, "[s] to complete. Queue size ",queueSize)
-    del(idHolder[idX])
 
-    log = open(logFileName, "a")
-    log.write(str(timeTaken) + "," + str(queueSize) + "\n")
-    log.close()
+    # Compute time taken for the job from frontend -> backend
+
+    if idX in idHolder:
+
+        idHolder[idX][1] = time.time()
+        timeTaken = idHolder[idX][1] - idHolder[idX][0]
+        print("Job id : " + idX + "took " + str(timeTaken) +
+              "[s] to complete. Queue size " + str(idHolder[idX][2]))
+
+        with open(logFileName, "a") as log:
+            log.write(datetime.datetime.now().isoformat() + ',' + idX +
+                      ',' + str(timeTaken) + "," + str(idHolder[idX][2]) + "\n")
+
+        del(idHolder[idX])
+    else:
+        print('unknown job ' + idX)
+
 
 def receive(connection_info=None):
     global channel
     qname = "waspReply"
     credentials = pika.PlainCredentials(
         connection_info["username"], connection_info["password"])
-    connection = pika.BlockingConnection(pika.ConnectionParameters(
+    c = pika.BlockingConnection(pika.ConnectionParameters(
         connection_info["server"], connection_info["port"], '/', credentials))
-    channel = connection.channel()
+    channel = c.channel()
 
     channel.queue_declare(queue=qname, durable=True)
     channel.basic_qos(prefetch_count=1)
@@ -64,20 +58,26 @@ def receive(connection_info=None):
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
 
+
 def workloadGeneration():
     global idHolder
     url = 'http://172.16.0.10:5000/convertMovie'
     fileName = 'jellyfish-3-mbps-hd-h264.mkv'
-    for i in range(0,2):
+    for i in range(0, 2):
         corrId = str(uuid.uuid4())
         print(fileName)
         print(corrId)
-        idHolder[corrId] = [time.time(),0]
-        payload = {'movieName' : fileName, 'corrId' : corrId}
-        r = requests.get(url,params=payload)
+        queueSize = res.method.message_count
+        print("queue size: " + str(queueSize))
+        idHolder[corrId] = [time.time(), 0, queueSize]
+        payload = {'movieName': fileName, 'corrId': corrId}
+        r = requests.get(url, params=payload)
+
 
 if __name__ == "__main__":
 
+    global connection
+    global res
     parser = OptionParser()
     parser.add_option('-c', '--credential', dest='credentialFile',
                       help='Path to CREDENTIAL file', metavar='CREDENTIALFILE')
@@ -105,13 +105,18 @@ if __name__ == "__main__":
     else:
         # e.g. python backend.py -c credentials.txt
         print("Syntax: 'python backend.py -h' | '--help' for help")
+
+    qname = connection["queue"]
+    credentials = pika.PlainCredentials(
+        connection["username"], connection["password"])
+    connection = pika.BlockingConnection(pika.ConnectionParameters(connection["server"],
+                                                                   connection["port"], '/',
+                                                                   credentials))
+    channel = connection.channel()
+    res = channel.queue_declare(queue=qname, durable=True)
+
     for j in jobs:
         j.start()
  # Ensure all of the threads have finished
     for j in jobs:
         j.join()
-
-
-
-
-
