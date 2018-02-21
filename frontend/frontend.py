@@ -16,7 +16,7 @@ class Connection:
         self.channel = self.connection.channel()
 
         #self.channel.queue_declare(queue=qname, durable=True)
-        result = self.channel.queue_declare(queue='waspReply',exclusive=True) 
+        result = self.channel.queue_declare(queue='waspReply',durable=True) 
         self.callback_queue = result.method.queue
 
     def __del__(self):
