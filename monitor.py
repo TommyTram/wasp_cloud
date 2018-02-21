@@ -121,8 +121,7 @@ def get_stats(backendname, network, port):
     #cpu = get_cpu_stats(cpu_resp)
     #cpu = sum_cpu_load(cpu_loads)
 
-
-≈    cpu = dict((k, v) for k, v in cpu_loads.iteritems() if v is not None)
+    cpu = dict((k, v) for k, v in cpu_loads.iteritems() if v is not None)
 
     return nodes, cpu
 
