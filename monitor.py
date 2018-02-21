@@ -114,24 +114,46 @@ def get_stats(backendname, network, port):
 
     ips = get_client_ips(backendname, network)
     busy_resp = request_from_ips(ips, port, '/isBusy')
-    free, busy, na = get_busy_stats(busy_resp)
+    nodes = get_busy_stats(busy_resp)
 
     cpu_loads = request_from_ips(ips, port, '/cpuLoad')
 
     #cpu = get_cpu_stats(cpu_resp)
     #cpu = sum_cpu_load(cpu_loads)
 
-    cpu = dict((k, v) for k, v in cpu_loads.iteritems() if v is not None)
 
-    return free, busy, na, cpu
+≈    cpu = dict((k, v) for k, v in cpu_loads.iteritems() if v is not None)
+
+    return nodes, cpu
 
 
-def regulate(queue, setpoint=5):
+def regulate(nodes, queue, setpoint=5):
 
-    d = queue - setpoing
+    global last_update
+    p = .2
+
+    free, busy, na = nodes
+
+    d = queue - setpoint
+
+    print(d)
+    print(free)
+
+    r = p * d
+
+    print(last_update)
+
+    if last_update + datetime.timedelta(seconds=3) < datetime.datetime.now():
+
+        print('update!')
+        last_update = datetime.datetime.now()
+        return r if free + busy > 1 else 0
+
+    return 0
 
 
 if __name__ == "__main__":
+    global last_update
 
     parser = OptionParser()
 
@@ -149,12 +171,14 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    log = open(time.strftime("%Y%m%d-%H%M%S") + ".csv", "w+")
-    log.write("free,busy,N/A,queue,cpus \n")
+    last_update = datetime.datetime.now()
+
+    log = open(time.strftime("logs/mon_%Y%m%d-%H%M%S") + ".csv", "w+")
+
     try:
         while (True):
 
-            free, busy, na, cpu = get_stats(
+            nodes, cpu = get_stats(
                 options.backendname, options.network, options.port)
 
             queue = get_queue_length(options.credentialFile)
@@ -162,12 +186,16 @@ if __name__ == "__main__":
             cpu_str = ['{}: {}'.format(key, val)
                        for key, val in cpu.iteritems()]
 
+            free, busy, na = nodes
+
             print(
                 "Free: {0} Busy: {1} N/A: {2} Queue: {3} CPU: {4}".format(free, busy, na, queue, cpu_str))
 
             log.write("{0},{1},{2},{3},{4},{5}\n".format(
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
+
+            print(regulate(nodes, queue))
 
             time.sleep(1)
     except KeyboardInterrupt:
