@@ -126,6 +126,11 @@ def get_stats(backendname, network, port):
     return free, busy, na, cpu
 
 
+def regulate(queue, setpoint=5):
+
+    d = queue - setpoing
+
+
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -163,6 +168,7 @@ if __name__ == "__main__":
             log.write("{0},{1},{2},{3},{4},{5}\n".format(
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
+
             time.sleep(1)
     except KeyboardInterrupt:
         log.close()
