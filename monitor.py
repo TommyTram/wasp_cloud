@@ -159,8 +159,8 @@ if __name__ == "__main__":
             print(
                 "Free: {0} Busy: {1} N/A: {2} Queue: {3} CPU: {4}".format(free, busy, na, queue, cpu_str))
 
-            log.write("{0},{1},{2},{3},{4}\n".format(
-                free, busy, na, queue, ','.join(cpu.values())))
+            log.write("{0},{1},{2},{3},{4},{5}\n".format(
+                datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
             time.sleep(1)
     except KeyboardInterrupt:
