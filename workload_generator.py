@@ -11,10 +11,10 @@ import urlparse
 import os
 import requests
 import datetime
+import numpy as np
 
 idHolder = dict()
 logFileName = time.strftime("logs/wl_%Y%m%d-%H%M%S") + ".csv"
-
 
 def callback(ch, method, properties, body):
     global idHolder
@@ -61,21 +61,81 @@ def receive(connection_info=None):
 
 def workloadGeneration():
     global idHolder
+    global channel
+
+    # Static movie and url at the moment
     url = 'http://172.16.0.10:5000/convertMovie'
     fileName = 'jellyfish-3-mbps-hd-h264.mkv'
-    for i in range(0, 2):
+
+    # Define length of simulated users
+    tEnd = 10 # time in seconds
+   
+    # Define time at which the extra users kick in
+    tExtra = tEnd
+    
+    # Avg time for each user between service calls
+    avgTimeBetweenCallsOriginal = [20, 25, 30, 35, 40]
+
+    # Independent users -> can generate random times they will call the service
+    timeArray = np.array([])
+    for idx in range(len(avgTimeBetweenCallsOriginal)):
+        mu = avgTimeBetweenCallsOriginal[idx]
+	t = 0 + 0.5*idx
+	timeHolder = np.array([])
+	while t <= tEnd:
+	    t = t + np.random.normal(mu,10)
+	    #timeArray.append(t)
+	    timeHolder = np.append(timeHolder,t)
+	timeHolder -= timeHolder[0] - 0.5*idx
+	timeArray = np.append(timeArray,timeHolder)
+
+    # Add times for the extra appearing users
+    avgTimeBetweenCallsExtra = [18, 19, 20, 21, 22]
+    timeArrayExtra = np.array([])
+    for idx in range(len(avgTimeBetweenCallsExtra)):
+        mu = avgTimeBetweenCallsExtra[idx]
+        t = tExtra + 0.5*idx
+	timeHolder = np.array([])
+	while t <= tEnd:
+            t = t + np.random.normal(mu,5)
+	    timeHolder = np.append(timeHolder,t)
+
+	if len(timeHolder) > 0:
+	    timeHolder -= timeHolder[0] - 0.5*idx - tExtra
+	    timeArrayExtra = np.append(timeArrayExtra,timeHolder)
+
+    # Sort the array so that we know at which times to send the requests
+    sortedTimeArray = sorted(np.append(timeArray,timeArrayExtra))
+    dt = np.ediff1d(sortedTimeArray)
+
+    # Loop through the simulated service calls
+    for sleepTime in dt:
+        # Assign id
         corrId = str(uuid.uuid4())
         print(fileName)
         print(corrId)
+
+        # Open the channel to see how many messages are already in the queue
+        res = channel.queue_declare(queue='wasp', durable=True)
         queueSize = res.method.message_count
         print("queue size: " + str(queueSize))
+
+        # Assign the idHolder which contains the job id, start time, and queue size. To be filled at callback with end time
         idHolder[corrId] = [time.time(), 0, queueSize]
+
+        # Set up payload and send it to the front end
         payload = {'movieName': fileName, 'corrId': corrId}
         r = requests.get(url, params=payload)
 
+        print('User sent message with id', corrId)
+
+        # Sleep for the amount of time until next simulated call
+        time.sleep(sleepTime) 
+       
+    print('Sent all requests')
 
 if __name__ == "__main__":
-
+    global channel
     global connection
     global res
     parser = OptionParser()
