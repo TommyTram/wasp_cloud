@@ -82,6 +82,21 @@ class Manager:
             print ("server '%s' does not exist" % vm)
         return
 
+    def terminate_ip(self, ip):
+        server_exists = False
+        for s in self.nova.servers.list():
+            if s.networks[self.net_id] == ip:
+                print("server %s exists" % ip)
+                server_exists = True
+                break
+        if server_exists:
+            print("deleting server..........")
+            self.nova.servers.delete(s)
+            print("server '%s' successfully deleted" % ip)
+        else:
+            print ("server '%s' does not exist" % ip)
+        return
+
     def get_IPs(self):
         ip_list = self.nova.floating_ips.list()
         for ip in ip_list:
