@@ -128,7 +128,7 @@ def get_stats(backendname, network, port):
 
 def regulate(nodes, queue, setpoint=5):
 
-    global last_update
+    #global last_update
     p = .2
 
     free, busy, na = nodes
@@ -137,15 +137,17 @@ def regulate(nodes, queue, setpoint=5):
 
     r = p * d
 
-    if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
+    return r
 
-        print('update!')
-        last_update = datetime.datetime.now()
-        return r
-    else:
-        print('waiting..')
+    # if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
 
-    return 0
+    #    print('update!')
+    #    last_update = datetime.datetime.now()
+    #    return r
+    # else:
+    #    print('waiting..')
+
+    # return 0
 
 
 if __name__ == "__main__":
@@ -191,11 +193,12 @@ if __name__ == "__main__":
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
 
-            node_diff = regulate(nodes, queue)
-            print('node diff: ', node_diff)
+            if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
+                node_diff = regulate(nodes, queue)
+                print('node diff: ', node_diff)
 
-            if node_diff > 0:
-                for n in range(int(ceil(node_diff))):
+                if node_diff > 0:
+                    # for n in range(int(ceil(node_diff))):
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
 

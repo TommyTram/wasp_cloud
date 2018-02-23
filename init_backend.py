@@ -7,9 +7,6 @@ from paramiko import SSHClient
 import paramiko
 from scp import SCPClient  # pip install scp
 
-import json
-import urllib2
-import urlparse
 import subprocess
 
 
@@ -18,11 +15,9 @@ def push_credentials(name, network, local_file='client_credentials.txt', remote_
     clients = manager.list_search({"name": name})
 
     ssh = SSHClient()
-    # ssh.load_system_host_keys()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     for c in clients:
-        #assert network in c.networks, "No such network %s" % network
         if network in c.networks:
             c_net = c.networks[options.network]
             if len(c_net) > 0:
@@ -50,8 +45,6 @@ def get_rabbit_ip(name):
 
     rabbit = rabbits[0]
 
-    #assert options.network in rabbit.networks, "No such network %s" % options.network
-
     if options.network in rabbit.networks:
 
         rabbit_network = rabbit.networks[options.network]
@@ -68,40 +61,7 @@ def get_rabbit_ip(name):
 
 def get_token(username, password, os_project_id, os_auth_url='https://xerces.ericsson.net:5000/v3', os_user_domain_name='xerces'):
 
-    # curl -v -s -X POST $OS_AUTH_URL/auth/tokens   -H "Content-Type: application/json"   -d '{ "auth": { "identity": { "methods": ["password"],"password": {"user": {"domain": {"name": "'"$OS_USER_DOMAIN_NAME"'"},"name": "'"$OS_USERNAME"'", "password": "'"$OS_PASSWORD"'"} } } } }
-
-    # data = {"auth": {"identity": {"methods": ["password"], "password": {
-    #     "user": {"domain": {"name": os_user_domain_name},
-    #              "name": username,
-    #              "password": password}
-    # }}}}
-
-    # url = urlparse.urljoin(os_auth_url + "/", 'auth/tokens')
-    # print(json.dumps(data))
-    # print(url)
-
-    # req = urllib2.Request(url, json.dumps(
-    #     data), {'Content-Type': 'application/json'})
-
-    # try:
-    #     response = urllib2.urlopen(req)
-    #     headers = dict(response.info())
-
-    #     os_token = headers['x-subject-token']
-
-    #     return os_token
-
-    # except urllib2.HTTPError as e:
-    #     error_message = e.read()
-    #     print error_message
-
-    #     return None
-
     try:
-
-        # cmd = "swift --os-auth-url {0} --os-user-domain-name {1} --os-username {2} --os-password {3} --os-project-id {4} auth".format(
-        #    os_auth_url, os_user_domain_name, username, password, os_project_id)
-
         cmd = ['swift', '--os-auth-url', os_auth_url, '--os-user-domain-name', os_user_domain_name,
                '--os-username', username, '--os-password', password, '--os-project-id', os_project_id, 'auth']
 
