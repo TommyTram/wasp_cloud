@@ -126,7 +126,7 @@ def get_stats(backendname, network, port):
     return nodes, cpu
 
 
-def regulate(nodes, queue, setpoint=5):
+def regulate(nodes, queue, setpoint=0):
 
     #global last_update
     p = .2
