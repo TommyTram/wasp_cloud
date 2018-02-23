@@ -151,6 +151,7 @@ def get_stats(backendname, network, port):
 
 
 def regulate(nodes, queue, setpoint=5):
+    print('setpoint ', setpoint)
     p = .2
     free, busy, na = nodes
     d = queue - setpoint
@@ -203,7 +204,7 @@ if __name__ == "__main__":
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
 
-            node_diff = regulate(nodes, queue)
+            node_diff = regulate(nodes, queue, setpoint=5 * (free + busy))
             print('node diff: ', node_diff)
 
             # for n in range(int(ceil(node_diff))):
