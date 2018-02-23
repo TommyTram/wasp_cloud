@@ -12,7 +12,6 @@ import datetime
 def start_vm(name, image, start_script):
 
     manager = Manager(start_script=start_script)
-
     manager.create(name=name, image=image)
 
 
@@ -194,7 +193,11 @@ if __name__ == "__main__":
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
 
-            print(regulate(nodes, queue))
+            node_diff = regulate(nodes, queue)
+
+            if node_diff > 0:
+                for n in range(node_diff):
+                    start_vm('backend', 'backend/backend_image.sh', 'backend')
 
             time.sleep(1)
     except KeyboardInterrupt:
