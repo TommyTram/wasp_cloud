@@ -31,12 +31,12 @@ def push_credentials(name, network, local_file='client_credentials.txt', remote_
                 print("pushing to " + name + ": " + c_ip)
 
                 try:
-                    ssh.connect(c_ip)
+                    ssh.connect(c_ip, timeout=2)
                     scp = SCPClient(ssh.get_transport())
 
                     scp.put(local_file, remote_file)
                     ssh.close()
-                except Exception e:
+                except Exception, e:
                     print(e)
             else:
                 print('network nog in ', c)
