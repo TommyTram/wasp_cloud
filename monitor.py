@@ -213,7 +213,7 @@ if __name__ == "__main__":
                         stop_vm(kill_ip)
 
             if na > 0:
-                if last_credentials + datetime.timedelta(seconds=120) < datetime.datetime.now():
+                if last_credentials + datetime.timedelta(seconds=30) < datetime.datetime.now():
                     print('pushing credentials')
                     push_credentials('backend', options.network)
                     push_credentials('backend', options.network,
