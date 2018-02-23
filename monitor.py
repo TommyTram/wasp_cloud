@@ -136,7 +136,7 @@ def regulate(nodes, queue, setpoint=5):
 
     r = p * d
 
-    if last_update + datetime.timedelta(seconds=3) < datetime.datetime.now():
+    if last_update + datetime.timedelta(seconds=30) < datetime.datetime.now():
 
         print('update!')
         last_update = datetime.datetime.now()
