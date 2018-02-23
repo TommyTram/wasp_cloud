@@ -7,6 +7,7 @@ import urlparse
 import os.path
 import time
 import datetime
+from math import ceil
 
 
 def start_vm(name, image, start_script):
@@ -136,7 +137,7 @@ def regulate(nodes, queue, setpoint=5):
 
     r = p * d
 
-    if last_update + datetime.timedelta(seconds=30) < datetime.datetime.now():
+    if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
 
         print('update!')
         last_update = datetime.datetime.now()
@@ -194,7 +195,7 @@ if __name__ == "__main__":
             print('node diff: ', node_diff)
 
             if node_diff > 0:
-                for n in range(int(round(node_diff))):
+                for n in range(int(ceil(node_diff))):
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
 
