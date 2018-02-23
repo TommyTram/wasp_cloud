@@ -67,6 +67,7 @@ def callback(ch, method, props, body):
     except:
         print('no ostoken')
         failed(ch, method, fd_in, fd_out)
+        return
 
     # Open url
 
