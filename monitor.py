@@ -202,7 +202,7 @@ if __name__ == "__main__":
 
             # for n in range(int(ceil(node_diff))):
             if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
-                if node_diff > 0:
+                if node_diff > 0 and na == 0:
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
                     last_update = datetime.datetime.now()
