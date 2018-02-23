@@ -22,19 +22,21 @@ def push_credentials(name, network, local_file='client_credentials.txt', remote_
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     for c in clients:
-        assert network in c.networks, "No such network %s" % network
+        #assert network in c.networks, "No such network %s" % network
+        if network in c.network:
+            c_net = c.networks[options.network]
+            if len(c_net) > 0:
+                c_ip = c_net[0]
 
-        c_net = c.networks[options.network]
-        if len(c_net) > 0:
-            c_ip = c_net[0]
+                print("pushing to " + name + ": " + c_ip)
 
-            print("pushing to " + name + ": " + c_ip)
+                ssh.connect(c_ip)
+                scp = SCPClient(ssh.get_transport())
 
-            ssh.connect(c_ip)
-            scp = SCPClient(ssh.get_transport())
-
-            scp.put(local_file, remote_file)
-            ssh.close()
+                scp.put(local_file, remote_file)
+                ssh.close()
+            else:
+                print('network nog in ', c)
 
 
 def get_rabbit_ip(name):
@@ -45,15 +47,20 @@ def get_rabbit_ip(name):
 
     rabbit = rabbits[0]
 
-    assert options.network in rabbit.networks, "No such network %s" % options.network
+    #assert options.network in rabbit.networks, "No such network %s" % options.network
 
-    rabbit_network = rabbit.networks[options.network]
+    if options.network in rabbit.networks:
 
-    assert len(rabbit_network) > 0, "No ips found"
+        rabbit_network = rabbit.networks[options.network]
 
-    rabbit_ip = rabbit_network[0]
+        assert len(rabbit_network) > 0, "No ips found"
 
-    return rabbit_ip
+        rabbit_ip = rabbit_network[0]
+
+        return rabbit_ip
+    else:
+        print('no rabbit found')
+        return None
 
 
 def get_token(username, password, os_project_id, os_auth_url='https://xerces.ericsson.net:5000/v3', os_user_domain_name='xerces'):
