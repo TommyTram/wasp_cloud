@@ -86,7 +86,7 @@ class Manager:
         server_exists = False
         for s in self.nova.servers.list():
             print(s.networks[self.net_id])
-            if s.networks[self.net_id] == ip:
+            if s.networks[self.net_id] == [ip]:
                 print("server %s exists" % ip)
                 server_exists = True
                 break
