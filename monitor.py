@@ -62,7 +62,6 @@ def get_busy_stats(responses):
     free = 0
     busy = 0
     na = 0
-    print(responses)
     for key in responses:
         r = responses[key]
         if r == '0':
@@ -217,6 +216,8 @@ if __name__ == "__main__":
                 if last_credentials + datetime.timedelta(seconds=120) < datetime.datetime.now():
                     print('pushing credentials')
                     push_credentials('backend', options.network)
+                    push_credentials('backend', options.network,
+                                     local_file='os_token', remote_file='os_token')
                     last_credentials = datetime.datetime.now()
 
             time.sleep(1)
