@@ -209,7 +209,7 @@ if __name__ == "__main__":
                     last_update = datetime.datetime.now()
                 if node_diff < 0:
                     if free + busy > 0:
-                        kill_ip = free[0]
+                        kill_ip = free_nodes[0]
                         print('killing', kill_ip)
                         stop_vm(kill_ip)
 
