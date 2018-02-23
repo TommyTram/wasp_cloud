@@ -196,7 +196,7 @@ if __name__ == "__main__":
             if node_diff > 0:
                 for n in range(int(round(node_diff))):
                     print('starting wm')
-                    start_vm('backend', 'backend/backend_image.sh', 'backend')
+                    start_vm('backend', 'backend,' 'backend/backend_image.sh')
 
             time.sleep(1)
     except KeyboardInterrupt:
