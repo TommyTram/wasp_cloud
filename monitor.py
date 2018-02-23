@@ -134,18 +134,15 @@ def regulate(nodes, queue, setpoint=5):
 
     d = queue - setpoint
 
-    print(d)
-    print(free)
-
     r = p * d
-
-    print(last_update)
 
     if last_update + datetime.timedelta(seconds=3) < datetime.datetime.now():
 
         print('update!')
         last_update = datetime.datetime.now()
         return r if free + busy > 1 else 0
+    else:
+        print('waiting..')
 
     return 0
 
@@ -194,9 +191,11 @@ if __name__ == "__main__":
             log.flush()
 
             node_diff = regulate(nodes, queue)
+            print('node diff: ', node_diff)
 
             if node_diff > 0:
                 for n in range(node_diff):
+                    print('starting wm')
                     start_vm('backend', 'backend/backend_image.sh', 'backend')
 
             time.sleep(1)
