@@ -8,13 +8,18 @@ import os.path
 import time
 import datetime
 from math import ceil
-from .init_backend import push_credentials
+from init_backend import push_credentials
 
 
 def start_vm(name, image, start_script):
 
     manager = Manager(start_script=start_script)
     manager.create(name=name, image=image)
+
+
+def stop_vm(ip):
+    manager = Manager()
+    manager.terminate_ip(ip)
 
 
 def request(ip, port, uri):
@@ -70,6 +75,16 @@ def get_busy_stats(responses):
     return free, busy, na
 
 
+def get_free_nodes(responses):
+
+    free = list()
+    for key in responses:
+        if responses[key] == '0':
+            free.append(key)
+
+    return free
+
+
 def sum_cpu_load(responses):
 
     sum = 0.0
@@ -118,6 +133,8 @@ def get_stats(backendname, network, port):
     busy_resp = request_from_ips(ips, port, '/isBusy')
     nodes = get_busy_stats(busy_resp)
 
+    free_nodes = get_free_nodes(busy_resp)
+
     cpu_loads = request_from_ips(ips, port, '/cpuLoad')
 
     #cpu = get_cpu_stats(cpu_resp)
@@ -125,31 +142,16 @@ def get_stats(backendname, network, port):
 
     cpu = dict((k, v) for k, v in cpu_loads.iteritems() if v is not None)
 
-    return nodes, cpu
+    return nodes, free_nodes, cpu
 
 
-def regulate(nodes, queue, setpoint=0):
-
-    #global last_update
+def regulate(nodes, queue, setpoint=5):
     p = .2
-
     free, busy, na = nodes
-
     d = queue - setpoint
-
     r = p * d
 
     return r
-
-    # if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
-
-    #    print('update!')
-    #    last_update = datetime.datetime.now()
-    #    return r
-    # else:
-    #    print('waiting..')
-
-    # return 0
 
 
 if __name__ == "__main__":
@@ -179,7 +181,7 @@ if __name__ == "__main__":
     try:
         while (True):
 
-            nodes, cpu = get_stats(
+            nodes, free_nodes, cpu = get_stats(
                 options.backendname, options.network, options.port)
 
             queue = get_queue_length(options.credentialFile)
@@ -205,8 +207,11 @@ if __name__ == "__main__":
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
                     last_update = datetime.datetime.now()
-                # if node_diff < 0:
-                #    if free + busy > 0
+                if node_diff < 0:
+                    if free + busy > 0:
+                        kill_ip = free[0]
+                        print('killing', kill_ip)
+                        stop_vm(kill_ip)
 
             if na > 0:
                 if last_credentials + datetime.timedelta(seconds=120) < datetime.datetime.now():
