@@ -45,7 +45,7 @@ def get_client_ips(name, network):
 
     ips = list()
     for c in clients:
-        #assert network in c.networks, "No such network %s" % network
+        # assert network in c.networks, "No such network %s" % network
 
         if network in c.networks:
 
@@ -74,14 +74,20 @@ def get_busy_stats(responses):
     return free, busy, na
 
 
-def get_free_nodes(responses):
+def get_working_nodes(responses):
 
     free = list()
+    busy = list()
+    na = list()
     for key in responses:
         if responses[key] == '0':
             free.append(key)
+        elif responses[key] == '0':
+            busy.append(key)
+        else:
+            na.append(key)
 
-    return free
+    return free, busy, na
 
 
 def sum_cpu_load(responses):
@@ -132,16 +138,16 @@ def get_stats(backendname, network, port):
     busy_resp = request_from_ips(ips, port, '/isBusy')
     nodes = get_busy_stats(busy_resp)
 
-    free_nodes = get_free_nodes(busy_resp)
+    free_nodes, busy_nodes, na_nodes = get_working_nodes(busy_resp)
 
     cpu_loads = request_from_ips(ips, port, '/cpuLoad')
 
-    #cpu = get_cpu_stats(cpu_resp)
-    #cpu = sum_cpu_load(cpu_loads)
+    # cpu = get_cpu_stats(cpu_resp)
+    # cpu = sum_cpu_load(cpu_loads)
 
     cpu = dict((k, v) for k, v in cpu_loads.iteritems() if v is not None)
 
-    return nodes, free_nodes, cpu
+    return nodes, free_nodes, busy_nodes, na_nodes, cpu
 
 
 def regulate(nodes, queue, setpoint=5):
@@ -180,7 +186,7 @@ if __name__ == "__main__":
     try:
         while (True):
 
-            nodes, free_nodes, cpu = get_stats(
+            nodes, free_nodes, busy_nodes, na_nodes, cpu = get_stats(
                 options.backendname, options.network, options.port)
 
             queue = get_queue_length(options.credentialFile)
@@ -201,17 +207,25 @@ if __name__ == "__main__":
             print('node diff: ', node_diff)
 
             # for n in range(int(ceil(node_diff))):
-            if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
+            if last_update + datetime.timedelta(seconds(30) < datetime.datetime.now():
                 if node_diff > 0 and na == 0:
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
-                    last_update = datetime.datetime.now()
+                    last_update=datetime.datetime.now()
                 if node_diff < 0:
                     if free + busy > 1:
+                        if na > 0:
+                            kill_ip=na_nodes[0]
+                            print('killing na node')
                         if free > 0:
-                            kill_ip = free_nodes[0]
-                            print('killing', kill_ip)
-                            stop_vm(kill_ip)
+                            print('killing free node')
+                            kill_ip=free_nodes[0]
+                        else:
+                            print('killing working node')
+                            kill_ip=busy_nodes[0]
+
+                        print('killing', kill_ip)
+                        stop_vm(kill_ip)
 
             if na > 0:
                 if last_credentials + datetime.timedelta(seconds=30) < datetime.datetime.now():
@@ -219,7 +233,7 @@ if __name__ == "__main__":
                     push_credentials('backend', options.network)
                     push_credentials('backend', options.network,
                                      local_file='os_token', remote_file='os_token')
-                    last_credentials = datetime.datetime.now()
+                    last_credentials=datetime.datetime.now()
 
             time.sleep(1)
     except KeyboardInterrupt:
