@@ -169,7 +169,7 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    last_update = datetime.datetime.time(0, 0)
+    last_update = datetime.datetime.date(2007, 12, 5)
 
     log = open(time.strftime("logs/mon_%Y%m%d-%H%M%S") + ".csv", "w+")
 
