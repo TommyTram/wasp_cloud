@@ -82,7 +82,7 @@ def get_working_nodes(responses):
     for key in responses:
         if responses[key] == '0':
             free.append(key)
-        elif responses[key] == '0':
+        elif responses[key] == '1':
             busy.append(key)
         else:
             na.append(key)
