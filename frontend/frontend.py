@@ -22,6 +22,7 @@ class Connection:
         # self.callback_queue = result.method.queue
 
     def __del__(self):
+        print('Deleting')
         # self.connection.close()
 
     def send_to_queue(self, message="Hello!", corr_id='0000'):
@@ -39,7 +40,7 @@ class Connection:
                                        delivery_mode=2,
                                        reply_to=self.callback_queue,
                                        correlation_id=corr_id))
-        
+
         print(" [x] Sent %s" % message)
         self.connection.close()
 
