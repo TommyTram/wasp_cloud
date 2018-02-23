@@ -169,7 +169,7 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    last_update = datetime.datetime.now()
+    last_update = datetime.time(0, 0)
 
     log = open(time.strftime("logs/mon_%Y%m%d-%H%M%S") + ".csv", "w+")
 
@@ -193,14 +193,15 @@ if __name__ == "__main__":
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
 
-            if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
-                node_diff = regulate(nodes, queue)
-                print('node diff: ', node_diff)
+            node_diff = regulate(nodes, queue)
+            print('node diff: ', node_diff)
 
-                if node_diff > 0:
+            if node_diff > 0:
                     # for n in range(int(ceil(node_diff))):
+                if last_update + datetime.timedelta(seconds=120) < datetime.datetime.now():
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
+                    last_update = datetime.datetime.now()
 
             time.sleep(1)
     except KeyboardInterrupt:
