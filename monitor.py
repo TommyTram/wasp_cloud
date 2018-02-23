@@ -140,7 +140,7 @@ def regulate(nodes, queue, setpoint=5):
 
         print('update!')
         last_update = datetime.datetime.now()
-        return r if free + busy > 1 else 0
+        return r
     else:
         print('waiting..')
 
