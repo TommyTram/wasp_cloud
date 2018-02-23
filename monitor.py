@@ -194,7 +194,7 @@ if __name__ == "__main__":
             print('node diff: ', node_diff)
 
             if node_diff > 0:
-                for n in range(node_diff):
+                for n in range(int(round(node_diff))):
                     print('starting wm')
                     start_vm('backend', 'backend/backend_image.sh', 'backend')
 
