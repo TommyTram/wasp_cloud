@@ -19,7 +19,7 @@ def push_credentials(name, network, local_file='client_credentials.txt', remote_
 
     for c in clients:
         if network in c.networks:
-            c_net = c.networks[options.network]
+            c_net = c.networks[network]
             if len(c_net) > 0:
                 c_ip = c_net[0]
 
