@@ -208,7 +208,7 @@ if __name__ == "__main__":
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
                     last_update = datetime.datetime.now()
                 if node_diff < 0:
-                    if free + busy > 0:
+                    if free + busy > 1:
                         kill_ip = free_nodes[0]
                         print('killing', kill_ip)
                         stop_vm(kill_ip)
