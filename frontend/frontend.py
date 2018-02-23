@@ -15,17 +15,22 @@ class Connection:
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.connection_info["server"],
                                                                             self.connection_info["port"], '/',
                                                                             self.credentials))
-        self.channel = self.connection.channel()
+        # self.channel = self.connection.channel()
 
-        #self.channel.queue_declare(queue=qname, durable=True)
-        result = self.channel.queue_declare(queue='waspReply', durable=True)
-        self.callback_queue = result.method.queue
+        # #self.channel.queue_declare(queue=qname, durable=True)
+        # result = self.channel.queue_declare(queue='waspReply', durable=True)
+        # self.callback_queue = result.method.queue
 
     def __del__(self):
-        self.connection.close()
+        # self.connection.close()
 
     def send_to_queue(self, message="Hello!", corr_id='0000'):
 
+
+        self.channel = self.connection.channel()
+        #self.channel.queue_declare(queue=qname, durable=True)
+        result = self.channel.queue_declare(queue='waspReply', durable=True)
+        self.callback_queue = result.method.queue
         self.channel.basic_publish(exchange='',
                                    routing_key=self.qname,
                                    body=message,
@@ -34,9 +39,9 @@ class Connection:
                                        delivery_mode=2,
                                        reply_to=self.callback_queue,
                                        correlation_id=corr_id))
-
+        
         print(" [x] Sent %s" % message)
-
+        self.connection.close()
 
 app = Flask(__name__)
 
