@@ -34,6 +34,7 @@ def failed(ch, method, fd_in, fd_out, redeliver=True):
     ch.basic_nack(method.delivery_tag, False, redeliver)
     isBusyState = "0"
 
+
 def callback(ch, method, props, body):
     global isBusyState
     global os_token_file
@@ -45,9 +46,6 @@ def callback(ch, method, props, body):
 
     auth_path = "https://xerces.ericsson.net:5000/v3/"
     container = "CloudStoring"
-
-    with open(os.path.expanduser(os_token_file)) as f:
-        os_token = f.read().replace('\n', ';')
 
     #downloadPath = "https://xerces.ericsson.net:7480/swift/v1/CloudStoring/"
 
@@ -63,6 +61,13 @@ def callback(ch, method, props, body):
     fd_in, file_in = mkstemp()
     fd_out, file_out = mkstemp()
 
+    try:
+        with open(os.path.expanduser(os_token_file)) as f:
+            os_token = f.read().replace('\n', ';')
+    except:
+        print('no ostoken')
+        failed(ch, method, fd_in, fd_out)
+
     # Open url
 
     try:
@@ -71,10 +76,10 @@ def callback(ch, method, props, body):
 
         #cmd = ['os_token']
         print(cmd)
-        #subprocess.call([cmd])
-        ret=os.system(cmd)
-        if ret!=0:
-            failed(ch,mehtod,fd_in,fd_out,False)
+        # subprocess.call([cmd])
+        ret = os.system(cmd)
+        if ret != 0:
+            failed(ch, mehtod, fd_in, fd_out, False)
             return
         #rsp = urllib2.urlopen(url_in)
 
@@ -82,21 +87,21 @@ def callback(ch, method, props, body):
         #    f.write(rsp.read())
     except:
         print("Couldn't download")
-        failed(ch, method,fd_in,fd_out, False)
+        failed(ch, method, fd_in, fd_out, False)
         return
 
     try:
         cmd = """mencoder %s -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=3000 -oac copy -o %s""" % (
             file_in, file_out)
-        ret=os.system(cmd)
+        ret = os.system(cmd)
         print(ret)
-        if ret!=0:
-            failed(ch,method,fd_in,fd_out)
+        if ret != 0:
+            failed(ch, method, fd_in, fd_out)
             return
-	
+
     except:
         print("Couldn't convert")
-        failed(ch, method,fd_in,fd_out)
+        failed(ch, method, fd_in, fd_out)
         return
 
     # time.sleep(3)
@@ -104,7 +109,7 @@ def callback(ch, method, props, body):
     try:
         os.remove(file_in)
     except:
-        failed(ch, method,fd_in,fd_out)
+        failed(ch, method, fd_in, fd_out)
         return
         print("Couldn't remove file")
 
@@ -119,7 +124,7 @@ def callback(ch, method, props, body):
         # with open(file_in, 'w') as f:
         #    f.write(rsp.read())
     except:
-        failed(ch, method,fd_in,fd_out)
+        failed(ch, method, fd_in, fd_out)
         return
         print("Couldn't upload")
 
@@ -128,8 +133,8 @@ def callback(ch, method, props, body):
 
     ch.basic_publish(exchange='',
                      routing_key=props.reply_to,
-                     properties=pika.BasicProperties(correlation_id = \
-                                                     props.correlation_id),
+                     properties=pika.BasicProperties(
+                         correlation_id=props.correlation_id),
                      body='{} {}'.format(container, file_out))
 
     print(" [x] Process done ---")
