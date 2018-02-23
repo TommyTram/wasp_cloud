@@ -208,7 +208,7 @@ if __name__ == "__main__":
             print('node diff: ', node_diff)
 
             # for n in range(int(ceil(node_diff))):
-            if last_update + datetime.timedelta.seconds(30) < datetime.datetime.now():
+            if last_update + datetime.timedelta(seconds=30) < datetime.datetime.now():
                 if node_diff > 0 and na == 0:
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
