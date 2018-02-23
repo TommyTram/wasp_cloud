@@ -208,22 +208,22 @@ if __name__ == "__main__":
             print('node diff: ', node_diff)
 
             # for n in range(int(ceil(node_diff))):
-            if last_update + datetime.timedelta(seconds(30) < datetime.datetime.now():
+            if last_update + datetime.timedelta(seconds(30)) < datetime.datetime.now():
                 if node_diff > 0 and na == 0:
                     print('starting wm')
                     start_vm('backend', 'backend', 'backend/backend_image.sh')
-                    last_update=datetime.datetime.now()
+                    last_update = datetime.datetime.now()
                 if node_diff < 0:
                     if free + busy > 1:
                         if na > 0:
-                            kill_ip=na_nodes[0]
+                            kill_ip = na_nodes[0]
                             print('killing na node')
                         if free > 0:
                             print('killing free node')
-                            kill_ip=free_nodes[0]
+                            kill_ip = free_nodes[0]
                         else:
                             print('killing working node')
-                            kill_ip=busy_nodes[0]
+                            kill_ip = busy_nodes[0]
 
                         print('killing', kill_ip)
                         stop_vm(kill_ip)
@@ -234,7 +234,7 @@ if __name__ == "__main__":
                     push_credentials('backend', options.network)
                     push_credentials('backend', options.network,
                                      local_file='os_token', remote_file='os_token')
-                    last_credentials=datetime.datetime.now()
+                    last_credentials = datetime.datetime.now()
 
             time.sleep(1)
     except KeyboardInterrupt:
