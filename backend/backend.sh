@@ -6,13 +6,13 @@ sudo sed -i "s/127.0.0.1 localhost/127.0.0.1 cloud-backend/g" /etc/hosts
 
 # install some dependencies
 sudo apt-get -y update
-sudo apt-get install -y --no-install-recommends python-dev python-pip python-pika mencoder
+sudo apt-get install -y --no-install-recommends build-essential python-dev python-pip python-pika mencoder
 #sudo apt-get install -y python-pip
 #sudo apt-get install -y python-pika
 #sudo apt-get install -y mencoder
 
 # sudo pip install --upgrade pip
-# sudo pip install -U setuptools
+sudo pip install -U setuptools
 sudo pip install flask
 sudo pip install psutil
 sudo pip install python-swiftclient
