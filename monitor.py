@@ -241,7 +241,7 @@ if __name__ == "__main__":
                         if na > 0:
                             kill_ip = na_nodes[0]
                             print('killing na node')
-                        if free > 0:
+                        elif free > 0:
                             print('killing free node')
                             kill_ip = free_nodes[0]
                         else:
