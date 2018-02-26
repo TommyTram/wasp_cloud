@@ -251,9 +251,10 @@ if __name__ == "__main__":
             if na > 0:
                 if last_credentials + datetime.timedelta(seconds=30) < datetime.datetime.now():
                     print('pushing credentials')
-                    push_credentials('backend', options.network)
-                    push_credentials('backend', options.network,
-                                     local_file='os_token', remote_file='os_token')
+
+                    #push_credentials('backend', options.network)
+                    # push_credentials('backend', options.network,
+                    #                 local_file='os_token', remote_file='os_token')
 
                     for ip in na_nodes:
                         push_to_ip(ip, ['client_credentials.txt',
