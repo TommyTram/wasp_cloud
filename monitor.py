@@ -11,7 +11,7 @@ from math import ceil
 from init_backend import push_credentials
 
 
-def start_vm(name, image, start_script):
+def start_vm(name, image=None, start_script):
 
     manager = Manager(start_script=start_script)
     manager.create(name=name, image=image)
@@ -211,7 +211,7 @@ if __name__ == "__main__":
             if last_update + datetime.timedelta(seconds=30) < datetime.datetime.now():
                 if node_diff > 0 and na == 0:
                     print('starting wm')
-                    start_vm('backend', 'backend', 'backend/backend_image.sh')
+                    start_vm('backend', None, 'backend/backend.sh')
                     last_update = datetime.datetime.now()
                 if node_diff < 0:
                     if free + busy > 1:
