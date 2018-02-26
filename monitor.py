@@ -226,12 +226,12 @@ if __name__ == "__main__":
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
 
-            node_diff = regulate(nodes, queue, setpoint=5 * (free + busy))
+            node_diff = regulate(nodes, queue, setpoint=5 * (free + busy + na))
             print('node diff: ', node_diff)
 
             # for n in range(int(ceil(node_diff))):
             if last_update + datetime.timedelta(seconds=60) < datetime.datetime.now():
-                if node_diff > 0 and na == 0:
+                if node_diff > 0  # and na == 0:
                     print('starting wm')
                     start_vm('backend', 'backend/backend.sh')
                     last_update = datetime.datetime.now()
