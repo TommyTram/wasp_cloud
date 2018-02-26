@@ -174,12 +174,12 @@ def get_stats(backendname, network, port):
 
 def regulate(nodes, queue, setpoint=5):
     print('setpoint ', setpoint)
-    p = .2
+    # p = .2
     free, busy, na = nodes
     d = queue - setpoint
-    r = p * d
+    # r = p * d
 
-    return r
+    return d
 
 
 if __name__ == "__main__":
@@ -226,7 +226,8 @@ if __name__ == "__main__":
                 datetime.datetime.now().isoformat(), free, busy, na, queue, ','.join(cpu.values())))
             log.flush()
 
-            node_diff = regulate(nodes, queue, setpoint=5 * (free + busy + na))
+            setpoint = 5 * (free + busy + na)
+            node_diff = regulate(nodes, queue, setpoint=setpoint)
             print('node diff: ', node_diff)
 
             # for n in range(int(ceil(node_diff))):
@@ -235,7 +236,7 @@ if __name__ == "__main__":
                     print('starting wm')
                     start_vm('backend', 'backend/backend.sh')
                     last_update = datetime.datetime.now()
-                if node_diff < 0:
+                if node_diff < -setpoint / 5:
                     if free + busy > 1:
                         if na > 0:
                             kill_ip = na_nodes[0]
