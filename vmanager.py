@@ -11,7 +11,7 @@ from optparse import OptionParser
 
 class Manager:
     DEFAULT_IMAGE = "ubuntu 16.04"
-    DEFAULT_FLAVOUR = "c1m05"
+    DEFAULT_FLAVOUR = "c2m3"
 
     def __init__(self, start_script=None):
         self.start_script = start_script
