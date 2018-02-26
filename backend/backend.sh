@@ -10,9 +10,11 @@ sudo apt-get install -y --no-install-recommends python-dev python-pip python-pik
 #sudo apt-get install -y python-pip
 #sudo apt-get install -y python-pika
 #sudo apt-get install -y mencoder
-sudo pip install flask psutil python-swiftclient
-# sudo pip install psutil
-# sudo pip install python-swiftclient
+
+sudo pip install --upgrade pip
+sudo pip install flask
+sudo pip install psutil
+sudo pip install python-swiftclient
 
 
 
