@@ -250,6 +250,7 @@ if __name__ == "__main__":
 
                         print('killing', kill_ip)
                         stop_vm(kill_ip)
+                        last_update = datetime.datetime.now()
 
             if na > 0:
                 if last_credentials + datetime.timedelta(seconds=30) < datetime.datetime.now():
