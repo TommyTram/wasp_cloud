@@ -10,6 +10,26 @@ import datetime
 from math import ceil
 from init_backend import push_credentials
 
+from paramiko import SSHClient
+from scp import SCPClient  # pip install scp
+
+
+def push_to_ip(ip, local_files=['client_credentials.txt'], remote_files=['credentials.txt']):
+
+    ssh = SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    print("pushing to: " + ip)
+
+    try:
+        ssh.connect(ip, timeout=1)
+        scp = SCPClient(ssh.get_transport())
+        for n, f in enumerate(local_files):
+            scp.put(f, remote_files[n])
+        ssh.close()
+    except Exception, e:
+        print(e)
+
 
 def start_vm(name, start_script, image=None):
 
@@ -234,6 +254,12 @@ if __name__ == "__main__":
                     push_credentials('backend', options.network)
                     push_credentials('backend', options.network,
                                      local_file='os_token', remote_file='os_token')
+
+                    for ip in na_nodes:
+                        push_to_ip(ip, ['client_credentials.txt',
+                                        'os_token'],
+                                   remote_files=['credentials.txt',
+                                                 'os_token'])
                     last_credentials = datetime.datetime.now()
 
             time.sleep(1)
