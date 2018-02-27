@@ -68,41 +68,52 @@ def workloadGeneration():
     fileName = 'jellyfish-3-mbps-hd-h264.mkv'
 
     # Define length of simulated users
-    tEnd = 10 # time in seconds
+    tEnd = 3600 # time in seconds
    
     # Define time at which the extra users kick in
-    tExtra = tEnd
+    tExtra = 1800
     
     # Avg time for each user between service calls
-    avgTimeBetweenCallsOriginal = [20, 25, 30, 35, 40]
+    avgTimeBetweenCallsOriginal = [20+20, 20+25, 20+30, 20+35, 20+40]
 
     # Independent users -> can generate random times they will call the service
     timeArray = np.array([])
     for idx in range(len(avgTimeBetweenCallsOriginal)):
         mu = avgTimeBetweenCallsOriginal[idx]
-	t = 0 + 0.5*idx
+	t = np.random.uniform(0,mu)
 	timeHolder = np.array([])
 	while t <= tEnd:
 	    t = t + np.random.normal(mu,10)
 	    #timeArray.append(t)
 	    timeHolder = np.append(timeHolder,t)
-	timeHolder -= timeHolder[0] - 0.5*idx
+	#timeHolder -= timeHolder[0] - 0.5*idx
 	timeArray = np.append(timeArray,timeHolder)
 
     # Add times for the extra appearing users
-    avgTimeBetweenCallsExtra = [18, 19, 20, 21, 22]
+    avgTimeBetweenCallsExtra = [18+20, 19+20, 20+20, 21+20, 22+20]
     timeArrayExtra = np.array([])
     for idx in range(len(avgTimeBetweenCallsExtra)):
         mu = avgTimeBetweenCallsExtra[idx]
-        t = tExtra + 0.5*idx
+        t = np.random.uniform(tExtra,tExtra+mu)
 	timeHolder = np.array([])
 	while t <= tEnd:
-            t = t + np.random.normal(mu,5)
+            t = t + np.random.normal(mu,10)
 	    timeHolder = np.append(timeHolder,t)
 
 	if len(timeHolder) > 0:
-	    timeHolder -= timeHolder[0] - 0.5*idx - tExtra
+	    #timeHolder -= timeHolder[0] - 0.5*idx - tExtra
 	    timeArrayExtra = np.append(timeArrayExtra,timeHolder)
+    
+    for idx in range(len(avgTimeBetweenCallsOriginal)):
+        mu = avgTimeBetweenCallsOriginal[idx]
+        t = np.random.uniform(tEnd,tEnd+mu)
+        timeHolder = np.array([])
+        while t <= tEnd + 1800:
+            t = t + np.random.normal(mu,10)
+            #timeArray.append(t)
+            timeHolder = np.append(timeHolder,t)
+        #timeHolder -= timeHolder[0] - 0.5*idx
+        timeArray = np.append(timeArray,timeHolder)
 
     # Sort the array so that we know at which times to send the requests
     sortedTimeArray = sorted(np.append(timeArray,timeArrayExtra))
