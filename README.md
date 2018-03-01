@@ -8,4 +8,7 @@ The frontend, backend, and the rabbitMQ are all hosted on separate virtual machi
 
 ### Front end
 To start a frontend VM simply run
+
 `$ ./start_frontend.sh`
+
+This command will create a VM on the Cloud and install the required packages the frontend needs for the service.
