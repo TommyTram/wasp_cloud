@@ -32,7 +32,7 @@ This command will create a VM on the Cloud and install the required packages the
 ### Montior
 To start the monitor module simply run
 
-`$ python monitory.py`
+`$ python monitor.py`
 
 This will start the monitoring script, where it analyzes the system and decides if the service needs more or less resources (backend VMs). In parallel any logs produced are stored under `logs/`.
 
