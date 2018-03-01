@@ -35,3 +35,10 @@ To start the monitor module simply run
 `$ python monitory.py`
 
 This will start the monitoring script, where it analyzes the system and decides if the service needs more or less resources (backend VMs). In parallel any logs produced are stored under `logs/`.
+
+### Workload generator
+To simulate user requests to the system simply run
+
+`$ python workload_generator.py -c <credentialsFile.txt>`,
+
+where the credentials file corresponds to the settings needed to connect to the RabbitMQ server (please see the cloud tutorial http://wasp-sweden.org/graduate-school/courses/software-engineering-and-cloud-computing/cloud-computing/ for further information). Modifying this script, it is possible to change the user profile over time (how many users are sending requests to the service over time).
