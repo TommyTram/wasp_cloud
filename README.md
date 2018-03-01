@@ -8,4 +8,4 @@ The frontend, backend, and the rabbitMQ are all hosted on separate virtual machi
 
 ### Front end
 To start a frontend VM simply run
-´$ ./start_frontend.sh´
+`$ ./start_frontend.sh`
