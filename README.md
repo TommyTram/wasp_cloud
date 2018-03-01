@@ -7,3 +7,5 @@ The user requests are sent to the frontend, which in turn places them on a queue
 The frontend, backend, and the rabbitMQ are all hosted on separate virtual machines (VMs).
 
 ### Front end
+To start a frontend VM simply run
+`$ ./start_frontend.sh´
