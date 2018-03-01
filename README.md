@@ -60,7 +60,7 @@ Monitor: `$ python monitor.py`
 
 Note that these processes might take some time to start up first. When everything is up and running start the workload generator
 
-Workload: `$ python workload_generator.py` 
+Workload: `$ python workload_generator.py -c client_credentials.txt` 
 
 The monitor will continuously print out the status of the queue and the CPU utilization of each backend. During runtime the logs will be written to the folder `logs/`.
 
