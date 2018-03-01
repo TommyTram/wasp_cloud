@@ -34,4 +34,4 @@ To start the monitor module simply run
 
 `$ python monitory.py`
 
-This will start the monitoring script, where it analyzes the system and writes the log files under `logs/`.
+This will start the monitoring script, where it analyzes the system and decides if the service needs more or less resources (backend VMs). In parallel any logs produced are stored under `logs/`.
